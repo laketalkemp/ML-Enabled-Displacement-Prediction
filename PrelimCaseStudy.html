@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Displacement Vulnerability</title>
+    
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Load FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-btn {
+            transition: all 0.2s;
+        }
+        
+        .nav-btn.active {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border-left: 4px solid #0284c7;
+            font-weight: 600;
+        }
+
+        iframe {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased h-screen flex overflow-hidden">
+
+    <nav class="w-64 bg-white shadow-xl z-20 flex flex-col h-full shrink-0">
+        <div class="p-6 border-b border-slate-100">
+            <h1 class="text-xl font-bold text-slate-800 leading-tight">Environmental Displacement</h1>
+            <p class="text-xs text-slate-500 mt-2 uppercase tracking-wider font-semibold">HDSI Research Dashboard</p>
+        </div>
+        
+        <div class="flex flex-col flex-grow py-4">
+            <button onclick="switchTab('overview')" id="btn-overview" class="nav-btn active flex items-center px-6 py-4 text-left text-slate-600 hover:bg-slate-50">
+                <i class="fa-solid fa-book-open w-6"></i>
+                Project Overview
+            </button>
+            <button onclick="switchTab('staticMap')" id="btn-staticMap" class="nav-btn flex items-center px-6 py-4 text-left text-slate-600 hover:bg-slate-50">
+                <i class="fa-solid fa-earth-americas w-6"></i>
+                Global Hotspots
+            </button>
+            <button onclick="switchTab('temporalMap')" id="btn-temporalMap" class="nav-btn flex items-center px-6 py-4 text-left text-slate-600 hover:bg-slate-50">
+                <i class="fa-solid fa-clock-rotate-left w-6"></i>
+                Temporal Trajectory
+            </button>
+            <button onclick="switchTab('methodology')" id="btn-methodology" class="nav-btn flex items-center px-6 py-4 text-left text-slate-600 hover:bg-slate-50">
+                <i class="fa-solid fa-microchip w-6"></i>
+                Methodology
+            </button>
+        </div>
+        
+        <div class="p-6 border-t border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-700 font-bold">
+                    LK
+                </div>
+                <div>
+                    <p class="text-sm font-semibold">LaKeta Kemp</p>
+                    <p class="text-xs text-slate-500">UC San Diego</p>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 h-full overflow-y-auto bg-slate-50 p-8">
+        
+        <!-- Tab 1: Project Overview -->
+        <section id="overview" class="tab-content active max-w-5xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-10 mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6">Extreme Weather and Environmental Displacement</h2>
+                
+                <div class="prose prose-slate max-w-none text-lg space-y-6">
+                    <p>
+                        Extreme weather events, exacerbated by human caused climate change, disproportionately impact communities with limited socioeconomic resources and political representation. For marginalized populations, a single extreme heatwave, drought, or flood event often triggers a cascade of internal displacement, economic instability, and physical insecurity.
+                    </p>
+                    <p>
+                        Standard global circulation models inadvertently obscure localized extreme weather events, leading to high prediction uncertainty due to coarse geographic resolution. This lack of localized data is a critical bottleneck in anticipating and mitigating these localized crises, delaying a proactive humanitarian response.
+                    </p>
+                    <div class="bg-sky-50 border-l-4 border-sky-500 p-6 rounded-r-lg my-8">
+                        <h3 class="text-xl font-semibold text-sky-800 mb-2">Project Objective</h3>
+                        <p class="text-sky-900 m-0">
+                            To deploy a physics informed deep learning pipeline and spatial correlation models to downscale ERA5 meteorological data, generating highly accurate vulnerability maps for targeted displacement hotspots to empower proactive supply prepositioning.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-temperature-arrow-up"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Climate Hazards</h3>
+                    <p class="text-slate-600 text-sm">Evaluating physical shocks including drought frequency, natural disasters, and global human settlement exposure.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-users-rays"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Social Vulnerability</h3>
+                    <p class="text-slate-600 text-sm">Measuring underlying susceptibility through multidimensional poverty, conflict history, and existing displacement.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-hospital"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Coping Capacity</h3>
+                    <p class="text-slate-600 text-sm">Assessing community resilience via healthcare access, sanitation infrastructure, and institutional stability.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab 2: Global Map -->
+        <section id="staticMap" class="tab-content h-full flex flex-col">
+            <div class="mb-6 flex justify-between items-end shrink-0">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-800">Global Vulnerability Hotspots</h2>
+                    <p class="text-slate-600 mt-2">Interactive clustering based on Principal Component Analysis of World Bank metrics.</p>
+                </div>
+                <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-200 flex items-center gap-3">
+                    <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Legend:</span>
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-yellow-200"></div><span class="text-xs">Low</span></div>
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-orange-400"></div><span class="text-xs">Mild</span></div>
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-xs">Moderate</span></div>
+                    <div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-rose-900"></div><span class="text-xs">Severe</span></div>
+                </div>
+            </div>
+            
+            <div class="flex-grow w-full bg-slate-200 rounded-xl relative overflow-hidden flex items-center justify-center border border-slate-300">
+                <!-- If the iframe fails to load, this message is visible underneath -->
+                <div class="absolute text-center p-6 z-0">
+                    <i class="fa-solid fa-map-location-dot text-4xl text-slate-400 mb-4"></i>
+                    <p class="text-slate-500 font-medium">Please ensure 'vulnerability_map.html' is in the same directory as this file.</p>
+                </div>
+                <iframe src="vulnerability_map.html" class="w-full h-full absolute top-0 left-0 z-10 bg-white" title="Global Vulnerability Map"></iframe>
+            </div>
+        </section>
+
+        <!-- Tab 3: Temporal Analysis -->
+        <section id="temporalMap" class="tab-content h-full flex flex-col">
+            <div class="mb-6 shrink-0">
+                <h2 class="text-3xl font-bold text-slate-800">Longitudinal Vulnerability Trajectory</h2>
+                <p class="text-slate-600 mt-2">Animated projection demonstrating how regional vulnerability shifts over historical time periods.</p>
+            </div>
+            
+            <div class="flex-grow w-full bg-slate-200 rounded-xl relative overflow-hidden flex items-center justify-center border border-slate-300">
+                <div class="absolute text-center p-6 z-0">
+                    <i class="fa-solid fa-sliders text-4xl text-slate-400 mb-4"></i>
+                    <p class="text-slate-500 font-medium">Please ensure 'temporal_vulnerability_slider.html' is in the same directory as this file.</p>
+                </div>
+                <iframe src="temporal_vulnerability_slider.html" class="w-full h-full absolute top-0 left-0 z-10 bg-white" title="Temporal Vulnerability Slider"></iframe>
+            </div>
+        </section>
+
+        <!-- Tab 4: Methodology -->
+        <section id="methodology" class="tab-content max-w-4xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-slate-800">Methodological Architecture</h2>
+                <p class="text-slate-600 mt-2">Translating deep learning predictions into actionable humanitarian intelligence.</p>
+            </div>
+
+            <div class="space-y-8">
+                
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">Objective Data Weighting via PCA</h3>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed">
+                        In traditional social sciences, researchers often build indices by subjectively deciding that certain indicators are worth specific percentages. This framework eliminates human bias. The algorithm mathematically weighted the input matrices based purely on how much they actually contribute to the variance between regions. The composite score is entirely data driven, isolating a clean metric from highly overlapping environmental variables.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">Humanitarian Alignment and Clustering</h3>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed mb-4">
+                        A raw statistical score is not actionable for humanitarian agencies. To bridge this gap, the consolidated data is processed through K Means clustering to organize regions into distinct operational tiers.
+                    </p>
+                    <ul class="space-y-3 mt-4 text-slate-600">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-teal-500 mt-1"></i>
+                            <span>These tiers Low, Mild, Moderate, and Severe perfectly align with the United Nations High Commissioner for Refugees operational protocols.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-teal-500 mt-1"></i>
+                            <span>This directly determines eligibility for targeted relief and proactive supply prepositioning.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 border-l-4 border-l-rose-500">
+                    <h3 class="text-xl font-bold text-slate-800 mb-3">Addressing Epistemic Erasure</h3>
+                    <p class="text-slate-600 leading-relaxed">
+                        Standard open source geographic mapping libraries often fail to align with global humanitarian datasets due to complex geopolitical naming conventions or disputed borders. Because of these structural data rigidities, highly vulnerable populations frequently fall out of the data matrix entirely. 
+                    </p>
+                    <p class="text-slate-600 leading-relaxed mt-4">
+                        This architecture purposefully acknowledges these gaps as a demonstration of Recognition Justice. For the Fall technical milestones, the goal is to manually reconcile these specific geographic polygons to ensure administrative boundary disputes do not prevent communities from receiving an accurate vulnerability classification.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function switchTab(tabId) {
+            // Hide all tab content elements
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active styling from all navigation buttons
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Activate the selected tab and button
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
