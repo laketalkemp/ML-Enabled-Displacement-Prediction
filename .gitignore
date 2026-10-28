@@ -1,0 +1,30 @@
+# --- Restricted data: never commit -------------------------------------------------
+# EM-DAT (CRED/UCLouvain) terms forbid redistribution of records or a substantial part of them.
+data/raw/emdat/*
+!data/raw/emdat/README.md
+data/processed/emdat/*
+!data/processed/emdat/README.md
+# GADM boundaries: academic use only, no redistribution without permission.
+**/gadm*/
+**/*gadm*.gpkg
+**/*gadm*.zip
+
+# --- Large raw downloads: fetched by scripts (see data/README.md) ---------------------
+data/raw/era5land/*
+!data/raw/era5land/README.md
+data/raw/natural_earth/ne_10m_*.zip
+data/raw/natural_earth/ne_50m_coastline.zip
+data/raw/natural_earth/ne_50m_lakes.zip
+data/raw/natural_earth/ne_50m_rivers_lake_centerlines.zip
+
+# --- Python / tooling ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+.DS_Store
+.cdsapirc

@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hvd"
+version = "1.1.0"
+description = "Hazard, vulnerability and displacement: composite vulnerability index, hazard layers and validation"
+authors = [{ name = "LaKeta Kemp", email = "lkemp@ucsd.edu" }]
+license = { text = "MIT" }
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
