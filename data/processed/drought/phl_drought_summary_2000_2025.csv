@@ -1,0 +1,82 @@
+unit_id,name,mean_annual_precip_mm,drought_months_spi6,severe_months_spi6,drought_months_spei6,drought_events_spi6,longest_event_months,worst_event_severity,nearest_cell_fallback
+PH-00,Metro Manila,2289.362,27,12,38,4,6,-10.931,False
+PH-ABR,Abra,2820.633,30,10,33,4,6,-9.317,False
+PH-AGN,Agusan del Norte,2841.993,19,1,22,3,6,-7.631,False
+PH-AGS,Agusan del Sur,3006.224,27,12,31,3,12,-20.158,False
+PH-AKL,Aklan,2964.263,25,8,27,4,7,-11.834,False
+PH-ALB,Albay,2835.777,27,6,26,4,6,-8.434,False
+PH-ANT,Antique,3261.853,20,2,23,2,7,-9.528,False
+PH-APA,Apayao,3359.088,46,15,40,7,8,-11.432,False
+PH-AUR,Aurora,2818.077,29,6,28,3,8,-11.278,False
+PH-BAN,Bataan,2500.186,41,13,43,6,7,-9.921,False
+PH-BAS,Basilan,2199.161,30,7,31,4,8,-12.393,False
+PH-BEN,Benguet,3508.800,33,10,36,5,6,-10.190,False
+PH-BIL,Biliran,2472.062,30,4,31,5,11,-14.872,False
+PH-BOH,Bohol,2740.941,22,2,28,3,7,-9.356,False
+PH-BTG,Batangas,2381.685,31,12,36,3,9,-13.779,False
+PH-BTN,Batanes,2035.669,34,16,44,4,9,-13.769,True
+PH-BUK,Bukidnon,3088.216,25,5,27,3,6,-8.088,False
+PH-BUL,Bulacan,2552.902,26,13,28,3,9,-15.242,False
+PH-CAG,Cagayan,3043.378,38,11,42,7,5,-9.032,False
+PH-CAM,Camiguin,2055.287,12,1,17,2,4,-5.391,False
+PH-CAN,Camarines Norte,2754.906,30,8,29,3,8,-11.206,False
+PH-CAP,Capiz,3299.081,28,4,26,3,8,-10.852,False
+PH-CAS,Camarines Sur,2745.489,28,8,26,5,6,-10.208,False
+PH-CAT,Catanduanes,2612.551,29,6,26,5,6,-8.292,False
+PH-CAV,Cavite,2644.258,32,14,35,3,9,-15.847,False
+PH-CEB,Cebu,2433.005,29,1,30,3,9,-10.650,False
+PH-COM,Compostela Valley,3862.257,26,7,26,3,7,-9.890,False
+PH-DAO,Davao Oriental,3297.554,25,7,27,4,8,-13.746,False
+PH-DAS,Davao del Sur,2557.739,22,6,24,3,7,-10.587,False
+PH-DAV,Davao del Norte,2482.222,23,6,28,1,12,-19.167,False
+PH-DIN,Dinagat Islands,3083.532,23,4,27,3,11,-15.645,False
+PH-EAS,Eastern Samar,2891.179,27,3,32,3,10,-13.233,False
+PH-GUI,Guimaras,2042.208,22,11,25,4,8,-14.682,False
+PH-IFU,Ifugao,3173.063,32,9,34,4,6,-10.203,False
+PH-ILI,Iloilo,2788.156,21,3,26,3,7,-9.699,False
+PH-ILN,Ilocos Norte,2604.881,42,12,46,6,7,-9.725,False
+PH-ILS,Ilocos Sur,3181.174,40,7,41,5,8,-11.775,False
+PH-ISA,Isabela,2873.552,18,6,28,1,9,-12.414,False
+PH-KAL,Kalinga,3134.224,32,7,33,4,5,-11.350,False
+PH-LAG,Laguna,2574.576,30,12,36,3,9,-13.507,False
+PH-LAN,Lanao del Norte,3213.763,29,2,28,5,7,-8.597,False
+PH-LAS,Lanao del Sur,4229.395,23,3,23,5,5,-6.307,False
+PH-LEY,Leyte,2839.922,22,0,23,2,9,-10.794,False
+PH-LUN,La Union,3278.637,42,14,45,6,9,-14.911,False
+PH-MAD,Marinduque,2274.618,28,7,28,3,10,-12.349,False
+PH-MAG,Maguindanao,3048.115,26,4,28,3,6,-7.550,False
+PH-MAS,Masbate,2395.464,26,8,33,4,8,-11.817,False
+PH-MDC,Occidental Mindoro,3372.153,39,10,37,5,8,-12.586,False
+PH-MDR,Oriental Mindoro,3304.496,29,6,31,3,6,-8.694,False
+PH-MOU,Mountain Province,3164.175,27,5,34,4,4,-8.676,False
+PH-MSC,Misamis Occidental,2951.161,27,7,25,4,12,-15.189,False
+PH-MSR,Misamis Oriental,3055.125,30,3,29,4,8,-10.431,False
+PH-NCO,Cotabato,2746.938,29,6,24,4,8,-10.888,False
+PH-NEC,Negros Occidental,3191.463,23,3,24,3,8,-9.865,False
+PH-NER,Negros Oriental,2582.638,21,1,26,4,5,-6.622,False
+PH-NSA,Northern Samar,2655.822,30,6,30,4,10,-15.475,False
+PH-NUE,Nueva Ecija,2291.516,30,8,35,3,6,-9.482,False
+PH-NUV,Nueva Vizcaya,2641.255,32,12,39,5,10,-15.303,False
+PH-PAM,Pampanga,1989.839,40,14,47,7,6,-10.476,False
+PH-PAN,Pangasinan,2335.942,37,11,40,4,7,-10.236,False
+PH-PLW,Palawan,2574.109,22,0,28,2,6,-7.417,False
+PH-QUE,Quezon,2688.344,27,10,27,4,10,-13.265,False
+PH-QUI,Quirino,2785.495,30,8,31,4,10,-15.087,False
+PH-RIZ,Rizal,2657.500,30,10,37,2,6,-10.633,False
+PH-ROM,Romblon,2887.060,24,10,21,4,10,-16.120,False
+PH-SAR,Sarangani,3001.462,20,1,17,3,6,-8.020,False
+PH-SCO,South Cotabato,2691.415,22,1,27,3,6,-7.554,False
+PH-SIG,Siquijor,2177.657,18,1,22,3,6,-7.097,False
+PH-SLE,Southern Leyte,2955.659,21,2,24,2,6,-7.887,False
+PH-SLU,Sulu,1453.786,45,12,47,4,16,-20.393,False
+PH-SOR,Sorsogon,2638.255,29,5,28,3,8,-10.456,False
+PH-SUK,Sultan Kudarat,3275.313,24,1,25,3,5,-6.350,False
+PH-SUN,Surigao del Norte,2849.437,23,3,23,3,12,-16.735,False
+PH-SUR,Surigao del Sur,3322.705,29,6,29,3,10,-15.488,False
+PH-TAR,Tarlac,2079.919,42,7,47,7,6,-8.542,False
+PH-TAW,Tawi-Tawi,1686.486,50,9,52,6,12,-16.096,False
+PH-WSA,Samar,2587.646,31,1,28,4,9,-11.119,False
+PH-ZAN,Zamboanga del Norte,3108.076,31,4,31,5,6,-8.608,False
+PH-ZAS,Zamboanga del Sur,2925.782,20,2,23,3,6,-8.423,False
+PH-ZMB,Zambales,2865.560,37,11,37,5,7,-10.591,False
+PH-ZSI,Zamboanga Sibugay,2923.499,26,3,29,4,6,-8.665,False
