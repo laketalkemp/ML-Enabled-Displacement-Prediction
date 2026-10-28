@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software or its outputs, please cite it as below, and cite the underlying data sources listed in data/README.md."
+title: "ML-Enabled-Displacement-Prediction: composite vulnerability index, hazard layers and displacement validation"
+authors:
+  - family-names: Kemp
+    given-names: LaKeta
+    affiliation: "Halıcıoğlu Data Science Institute, University of California San Diego"
+    email: lkemp@ucsd.edu
+version: 1.1.0
+date-released: 2026-10-28
+license: MIT
+repository-code: "https://github.com/laketalkemp/ML-Enabled-Displacement-Prediction"
+url: "https://laketalkemp.github.io/ML-Enabled-Displacement-Prediction/"
+keywords:
+  - climate vulnerability
+  - INFORM
+  - EM-DAT
+  - ERA5-Land
+  - drought
+  - internal displacement
