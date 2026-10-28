@@ -68,5 +68,5 @@ Code is MIT-licensed (`LICENSE`). Please cite the repository using `CITATION.cff
 ## Methods notes and caveats
 
 - **The two sources overlap and differ in year.** The IMF and JRC indicators overlap (r = 0.90–0.94 for vulnerability, coping capacity and risk) and come from different years (2022 vs 2025). Which indicator set to use is open for Workshop 1. See `reports/data_dictionary.md`.
-- **Tiers are ordinal but not crisp.** They are K-means clusters on the score, numbered by centroid. Mean bootstrap stability is 0.93, and 18 countries sit near tier boundaries (stability < 0.80).
+- **Tiers are ordinal but not crisp.** They are K-means clusters on the score, numbered by centroid. Mean bootstrap stability is 0.93, and 17 countries sit near tier boundaries (stability < 0.80).
 - **Subnational results combine scales.** They pair subnational hazard exposure with national vulnerability and should be labelled that way.

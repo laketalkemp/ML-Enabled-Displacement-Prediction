@@ -75,7 +75,7 @@ The JRC files have no country missing from the IMF files. Three countries appear
 For v1.1 (all eight indicators):
 - PC1 explains 74.4% of the variance.
 - The silhouette score is 0.56.
-- Mean tier stability is 0.93, and 18 countries fall below 0.80.
+- Mean tier stability is 0.93, and 17 countries fall below 0.80 (`countries_below_80pct_stability` in the diagnostics).
 
 `vulnerability_index_longitudinal_2016_2022.csv` has one row per country and year for 2016–2022, the years both sources cover. Scores come from one PCA fitted on all country-years, so values are comparable across years.
 
