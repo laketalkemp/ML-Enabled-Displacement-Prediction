@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Displacement Hotspot Vulnerability Mapping Tool</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+  /* ─── Design tokens ─────────────────────────────────────────── */
+  :root {
+    --bg:            #EEF1F6;
+    --surface:       #FFFFFF;
+    --surface-alt:   #F4F7FA;
+    --text-primary:  #0C1B27;
+    --text-secondary:#3A5266;
+    --text-muted:    #6A8499;
+    --accent:        #135F66;
+    --accent-hover:  #0D474D;
+    --accent-warm:   #B07220;
+    --accent-light:  #D8EDEF;
+    --border:        #C8D6E2;
+    --rule:          #DDE4ED;
+
+    --ff-display: 'Cormorant Garamond', 'Georgia', serif;
+    --ff-body:    'IBM Plex Sans', system-ui, sans-serif;
+    --ff-mono:    'IBM Plex Mono', 'Menlo', monospace;
+
+    --max-w:  1080px;
+    --gutter: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:            #09131C;
+      --surface:       #0D1E2C;
+      --surface-alt:   #112438;
+      --text-primary:  #E2EBF5;
+      --text-secondary:#8CAABF;
+      --text-muted:    #536E82;
+      --accent:        #27ADBA;
+      --accent-hover:  #3DC5D3;
+      --accent-warm:   #CF912E;
+      --accent-light:  #0C2D3A;
+      --border:        #1C3448;
+      --rule:          #172A3C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:            #09131C;
+    --surface:       #0D1E2C;
+    --surface-alt:   #112438;
+    --text-primary:  #E2EBF5;
+    --text-secondary:#8CAABF;
+    --text-muted:    #536E82;
+    --accent:        #27ADBA;
+    --accent-hover:  #3DC5D3;
+    --accent-warm:   #CF912E;
+    --accent-light:  #0C2D3A;
+    --border:        #1C3448;
+    --rule:          #172A3C;
+  }
+
+  /* ─── Reset ─────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: var(--ff-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    background: var(--bg);
+    padding-inline: var(--gutter);
+    padding-block: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img { max-width: 100%; display: block; }
+  a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ─── Navigation ────────────────────────────────────────────── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+  }
+  .nav-inner {
+    max-width: var(--max-w);
+    margin-inline: auto;
+    height: 3.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .nav-name {
+    font-family: var(--ff-display);
+    font-weight: 400;
+    font-size: 1.0625rem;
+    letter-spacing: 0.01em;
+    color: var(--text-primary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+  .nav-back {
+    font-family: var(--ff-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    transition: color 0.15s;
+    text-decoration: none;
+  }
+  .nav-back:hover { color: var(--accent); text-decoration: none; }
+
+  /* ─── Page wrapper ──────────────────────────────────────────── */
+  .page { max-width: var(--max-w); margin-inline: auto; }
+
+  /* ─── Project header ────────────────────────────────────────── */
+  .project-header {
+    padding-block: clamp(3rem, 7vw, 5.5rem) clamp(2.5rem, 4vw, 4rem);
+    border-bottom: 1px solid var(--rule);
+  }
+  .project-eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.75rem;
+  }
+  .badge {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25em 0.7em;
+    border: 1px solid;
+  }
+  .badge-award {
+    color: var(--accent-warm);
+    border-color: color-mix(in srgb, var(--accent-warm) 35%, transparent);
+    background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+  }
+  .badge-status {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+    background: var(--accent-light);
+  }
+  .project-title {
+    font-family: var(--ff-display);
+    font-weight: 300;
+    font-size: clamp(2.25rem, 6vw, 4.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    text-wrap: balance;
+    margin-bottom: 1.25rem;
+  }
+  .project-title em { font-style: italic; color: var(--text-secondary); }
+  .project-subtitle {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    max-width: 62ch;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+  .project-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 0.15rem; }
+  .meta-label {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .meta-value { font-size: 0.8125rem; color: var(--text-secondary); }
+
+  /* ─── Section shared ────────────────────────────────────────── */
+  section { padding-block: clamp(2.5rem, 5vw, 4.5rem); border-bottom: 1px solid var(--rule); }
+  section:last-of-type { border-bottom: none; }
+
+  .section-label {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ─── Prose ─────────────────────────────────────────────────── */
+  .prose p {
+    margin-bottom: 1.1rem;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.78;
+  }
+  /* Constrain line length only inside narrower column contexts */
+  .two-col .prose p {
+    max-width: 52ch;
+  }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose h3 {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose h3:first-child { margin-top: 0; }
+
+  /* ─── Two-col ───────────────────────────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 4rem;
+    align-items: start;
+  }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; gap: 2rem 0; } }
+
+  /* ─── Framework pills ───────────────────────────────────────── */
+  .framework-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+  .pill {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    padding: 0.3em 0.7em;
+    white-space: nowrap;
+  }
+
+  /* ─── Data sources ──────────────────────────────────────────── */
+  .data-sources {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .data-source-item {
+    padding-block: 1.875rem;
+    border-top: 1px solid var(--border);
+  }
+  .data-source-item:first-child { border-top: none; padding-top: 0; }
+  .data-source-header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.625rem 1.125rem;
+    margin-bottom: 0.875rem;
+  }
+  .data-source-tag {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    padding: 0.2em 0.6em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .data-source-name {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .data-source-desc {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.78;
+    margin-bottom: 1rem;
+  }
+  .data-source-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 2rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--rule);
+  }
+  .data-meta-item {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+  .data-meta-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-right: 0.35em;
+  }
+
+  /* ─── Setup notice ──────────────────────────────────────────── */
+  .setup-notice {
+    background: color-mix(in srgb, var(--accent-warm) 7%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent-warm) 30%, transparent);
+    padding: 1rem 1.375rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+  }
+  .setup-notice-icon {
+    color: var(--accent-warm);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+  .setup-notice-body {}
+  .setup-notice-head {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    margin-bottom: 0.3rem;
+  }
+  .setup-notice-text {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .setup-notice-text code {
+    font-family: var(--ff-mono);
+    font-size: 0.8em;
+    background: color-mix(in srgb, var(--accent-warm) 10%, transparent);
+    padding: 0.1em 0.35em;
+    color: var(--accent-warm);
+  }
+  .setup-steps {
+    margin-top: 0.5rem;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .setup-steps li {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ─── Visualization tabs ────────────────────────────────────── */
+  .viz-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .viz-tabs::-webkit-scrollbar { display: none; }
+
+  .viz-tab {
+    font-family: var(--ff-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.75rem 1.375rem 0.6875rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px;
+  }
+  .viz-tab:hover { color: var(--text-secondary); }
+  .viz-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .viz-panel {
+    display: none;
+    border: 1px solid var(--border);
+    border-top: none;
+    background: var(--surface);
+  }
+  .viz-panel.active { display: block; }
+
+  .viz-panel-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .viz-panel-title {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 1.0625rem;
+    color: var(--text-primary);
+  }
+  .viz-panel-desc {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    max-width: 52ch;
+  }
+  .viz-open-link {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .viz-open-link:hover { color: var(--accent-hover); text-decoration: none; }
+
+  .viz-frame-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .viz-frame-wrap iframe {
+    width: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* Loading / error state */
+  .viz-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: var(--surface-alt);
+  }
+  .viz-fallback-icon { color: var(--border); }
+  .viz-fallback-msg {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    max-width: 38ch;
+    line-height: 1.65;
+  }
+  .viz-fallback a { color: var(--accent); }
+
+  /* ─── Cluster image ─────────────────────────────────────────── */
+  .cluster-figure {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .cluster-figure img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .cluster-caption {
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ─── Milestone tracker ─────────────────────────────────────── */
+  .milestone-track {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 0.5rem;
+    position: relative;
+  }
+  .milestone-track::before {
+    content: '';
+    position: absolute;
+    left: 1.0625rem;
+    top: 2.125rem;
+    bottom: 2.125rem;
+    width: 1px;
+    background: var(--border);
+  }
+  .milestone {
+    display: grid;
+    grid-template-columns: 2.125rem 1fr;
+    gap: 0 1.375rem;
+    padding-block: 0.25rem 2rem;
+    position: relative;
+  }
+  .milestone:last-child { padding-bottom: 0; }
+  .milestone-dot {
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.1rem;
+  }
+  .milestone-dot.active { border-color: var(--accent); background: var(--accent-light); }
+  .milestone-content { padding-top: 0.125rem; }
+  .milestone-number {
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+  }
+  .milestone-name {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 1.1875rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  .milestone-desc {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    line-height: 1.72;
+    max-width: 54ch;
+  }
+  .milestone-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--ff-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-top: 0.625rem;
+    padding: 0.2em 0.6em;
+    border: 1px solid;
+  }
+  .status-active { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-light); }
+  .status-upcoming { color: var(--text-muted); border-color: var(--border); background: var(--surface-alt); }
+  .status-dot { width: 0.375rem; height: 0.375rem; border-radius: 50%; background: currentColor; display: inline-block; flex-shrink: 0; }
+  .status-active .status-dot { animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: reduce) { .status-active .status-dot { animation: none; } }
+
+  /* ─── Repo banner ───────────────────────────────────────────── */
+  .repo-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.25rem 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+  .repo-banner:hover { background: var(--surface-alt); text-decoration: none; }
+  .repo-info { display: flex; align-items: center; gap: 0.875rem; }
+  .repo-icon { color: var(--text-muted); flex-shrink: 0; }
+  .repo-name { font-family: var(--ff-mono); font-size: 0.875rem; color: var(--text-primary); font-weight: 500; }
+  .repo-desc { font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.15rem; }
+  .repo-link {
+    font-family: var(--ff-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* ─── Footer ────────────────────────────────────────────────── */
+  footer {
+    padding-block: 2.25rem 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid var(--rule);
+    margin-top: 1rem;
+  }
+  .footer-name { font-family: var(--ff-display); font-size: 0.9375rem; color: var(--text-muted); }
+  .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+  .footer-links a { font-family: var(--ff-mono); font-size: 0.6875rem; letter-spacing: 0.06em; color: var(--text-muted); }
+  .footer-links a:hover { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- ─ Navigation ─────────────────────────────────────────────── -->
+<nav class="nav" aria-label="Site navigation">
+  <div class="nav-inner">
+    <a href="https://laketalkemp.github.io/" class="nav-name">LaKeta L. Kemp</a>
+    <a href="https://laketalkemp.github.io/#projects" class="nav-back" aria-label="Back to all projects">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      All Projects
+    </a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ─ Project Header ────────────────────────────────────────── -->
+  <header class="project-header">
+    <div class="project-eyebrow">
+      <span class="badge badge-award">Strategic Convene &amp; Influence Award</span>
+      <span class="badge badge-status">Active &middot; 2026&ndash;2027</span>
+    </div>
+    <h1 class="project-title">Displacement Hotspot<br><em>Vulnerability Mapping Tool</em></h1>
+    <p class="project-subtitle">Climate Data Science for Human Rights and Humanitarian Resilience. A composite vulnerability index and spatial analysis pipeline designed for the identification of communities facing disproportionate climate-driven displacement risk, structured for direct integration with humanitarian agency assessment frameworks.</p>
+    <div class="project-meta-row">
+      <div class="meta-item">
+        <span class="meta-label">Sponsoring Initiative</span>
+        <span class="meta-value">Extreme Weather and Environmental Displacement and Health Initiative</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Investigator</span>
+        <span class="meta-value">LaKeta L. Kemp, UCSD HDSI</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Period</span>
+        <span class="meta-value">2026&ndash;2027</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Repository</span>
+        <span class="meta-value"><a href="https://github.com/laketalkemp/ML-Enabled-Displacement-Prediction" target="_blank" rel="noopener noreferrer">ML-Enabled-Displacement-Prediction</a></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─ Overview ──────────────────────────────────────────────── -->
+  <section id="overview">
+    <p class="section-label">Overview</p>
+    <div class="prose">
+      <p>The global infrastructure for climate risk monitoring exhibits a structural asymmetry that deepens existing inequities: the communities most exposed to climate-driven displacement are, in many cases, the communities least visible to standard climate data products. Sparse ground-station coverage, limited satellite telemetry integration, and spatial resolutions optimized for policy-relevant regional aggregates all contribute to a data environment in which local, site-specific conditions, precisely those conditions that determine whether a household can or cannot remain in place, remain systematically underresolved.</p>
+      <p>This project addresses that asymmetry directly. The Displacement Hotspot Vulnerability Mapping Tool develops a composite vulnerability index pipeline that synthesizes INFORM Risk Index variables with UNHCR-IDC Vulnerability Screening Tool dimensions, producing tiered vulnerability scores at spatial resolutions sufficient for humanitarian agency planning. Methodologically, the project draws on super-resolution generative adversarial network architectures and spatially-aware clustering to extract site-specific signal from coarse satellite inputs, calibrating outputs against available ground-truth sensor data to correct systematic biases inherent to global reanalysis products in heterogeneous terrain.</p>
+      <p>Recognition Justice, the principle that communities must be rendered legible and present within the systems that shape decisions about their welfare, and Distributive Justice, the demand that exposure to climate harm and access to protective resources be evaluated in relation to social structures of advantage and disadvantage, together motivate both the selection of vulnerability dimensions and the design of the output scoring tiers. Outputs are structured for direct use by humanitarian agencies operating in data-scarce regions, where the absence of high-resolution climate data compounds the inequities that displacement itself produces.</p>
+    </div>
+  </section>
+
+  <!-- ─ Methodology ───────────────────────────────────────────── -->
+  <section id="methodology">
+    <p class="section-label">Methodology</p>
+    <div class="two-col">
+      <div class="prose">
+        <h3>Composite Index Construction</h3>
+        <p>The vulnerability index integrates variables from the INFORM Risk Index framework, including hazard and exposure measures, coping capacity indicators, and population vulnerability dimensions, with the structured screening criteria of the UNHCR-IDC Vulnerability Screening Tool. Variable selection prioritizes indicators available at humanitarian-relevant spatial scales and demonstrably associated with reduced adaptive capacity, drawing on displacement literature to anchor selection decisions in documented mechanisms rather than data availability alone.</p>
+        <p>Tiered scoring is structured across four thresholds — low, mild, moderate, and severe — calibrated to reflect meaningful distinctions in adaptive capacity. Tier boundaries are informed by field research on displacement thresholds and the operational categorizations used by humanitarian agencies in intake and prioritization workflows.</p>
+        <div class="framework-pills">
+          <span class="pill">INFORM Risk Index</span>
+          <span class="pill">UNHCR-IDC VST</span>
+          <span class="pill">Recognition Justice</span>
+          <span class="pill">Distributive Justice</span>
+        </div>
+      </div>
+      <div class="prose">
+        <h3>Spatial Analysis Pipeline</h3>
+        <p>Initial spatial analysis applies unsupervised clustering, including Principal Component Analysis and K-Means, to UNHCR vulnerability variables at regional scale, producing cluster typologies that reveal latent structure in displacement risk concentrations. These cluster outputs anchor the spatial correlation analyses that relate vulnerability index scores to documented displacement patterns and humanitarian agency case data.</p>
+        <p>The downscaling component applies physics-informed super-resolution generative adversarial networks to ERA5 reanalysis fields in high-priority displacement contexts, incorporating a Thermodynamic Regime Classifier to preserve physical consistency across diverse climate regimes. Bias correction against ground-truth sensor telemetry reduces systematic errors from the global reanalysis calibration domain.</p>
+        <div class="framework-pills">
+          <span class="pill">PCA &amp; K-Means</span>
+          <span class="pill">ERA5 Reanalysis</span>
+          <span class="pill">SRGAN Downscaling</span>
+          <span class="pill">Bias Correction</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─ Data Description ──────────────────────────────────────── -->
+  <section id="data">
+    <p class="section-label">Data Description</p>
+
+    <div class="data-sources">
+
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Coarse Satellite Inputs</span>
+          <h3 class="data-source-name">ERA5 &mdash; ECMWF Fifth-Generation Atmospheric Reanalysis</h3>
+        </div>
+        <p class="data-source-desc">Standard climate models operate at resolutions insufficient for localized humanitarian action. ERA5, the fifth-generation atmospheric reanalysis product from the European Centre for Medium-Range Weather Forecasts, is the de facto global standard for retrospective climate analysis, providing hourly atmospheric and land-surface estimates at approximately 31 km horizontal resolution. While ERA5 represents the most comprehensive global climate record available, its calibration is weighted toward regions with dense observational networks, producing geographic biases that systematically overlook the rural and underserved regions where displacement risk is highest. This project takes ERA5 as its coarse satellite input and applies a machine learning pipeline to produce site-specific climate estimates at resolutions suitable for monitoring communities that existing models render effectively invisible.</p>
+        <div class="data-source-meta">
+          <span class="data-meta-item"><span class="data-meta-label">Provider</span> European Centre for Medium-Range Weather Forecasts (ECMWF)</span>
+          <span class="data-meta-item"><span class="data-meta-label">Resolution</span> ~31 km horizontal, hourly temporal</span>
+          <span class="data-meta-item"><span class="data-meta-label">Last Updated</span> Monthly updates (covers 1940 to present)</span>
+          <span class="data-meta-item"><span class="data-meta-label">URL</span> <a href="https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels" target="_blank" rel="noopener noreferrer">cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels</a></span>
+          <span class="data-meta-item"><span class="data-meta-label">QA Protocols</span> <a href="https://confluence.ecmwf.int/display/CKB/ERA5" target="_blank" rel="noopener noreferrer">confluence.ecmwf.int/display/CKB/ERA5</a></span>
+          <span class="data-meta-item"><span class="data-meta-label">Role</span> Primary coarse-resolution input for the downscaling pipeline</span>
+        </div>
+      </div>
+
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Sparse Validation Data</span>
+          <h3 class="data-source-name">Ground-Truth Field Sensor Telemetry</h3>
+        </div>
+        <p class="data-source-desc">Communities in regions with sparse ground-level monitoring are effectively invisible to standard climate models, leaving them vulnerable to unpredictable disasters. The ground-truth sensor data used in this project surfaces that invisibility as a technical and ethical challenge rather than a data exclusion criterion. In-situ sensors deployed in target displacement contexts measure surface meteorological conditions, including temperature, humidity, precipitation, and wind, at the site-specific scale relevant to humanitarian planning. Sparse coverage is treated as a documented feature of the equity problem: monitoring gaps are quantified and incorporated into the uncertainty estimation of output vulnerability scores, rather than silently propagated as false precision. Bias calibration of satellite-derived estimates against these sensors corrects the geographic biases that standard models impose on rural and underserved populations.</p>
+        <div class="data-source-meta">
+          <span class="data-meta-item"><span class="data-meta-label">Last Updated</span> Site-specific; updated as field observations are collected</span>
+          <span class="data-meta-item"><span class="data-meta-label">URL</span> Project repository &mdash; <a href="https://github.com/laketalkemp/ML-Enabled-Displacement-Prediction" target="_blank" rel="noopener noreferrer">github.com/laketalkemp/ML-Enabled-Displacement-Prediction</a></span>
+          <span class="data-meta-item"><span class="data-meta-label">Role</span> Bias calibration reference; validation of high-fidelity downscaled estimates</span>
+          <span class="data-meta-item"><span class="data-meta-label">Note</span> Sparse coverage documented as uncertainty, not excluded from analysis</span>
+        </div>
+      </div>
+
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Vulnerability Framework</span>
+          <h3 class="data-source-name">INFORM Risk Index</h3>
+        </div>
+        <p class="data-source-desc">Translating complex climate variables into actionable insights for populations at risk of displacement requires a vulnerability framework grounded in the conditions that determine whether a community can withstand a single extreme heatwave, drought, or flood event, the kind of event that often triggers a cascade of internal displacement, economic instability, and physical insecurity. The INFORM Risk Index, developed by the Inter-Agency Standing Committee Task Team on Humanitarian Data and Preparedness, provides that grounding. Its three primary dimensions, hazard and exposure, socioeconomic vulnerability, and lack of coping capacity, are computed from over fifty sub-indicators drawn from internationally recognized sources. This project draws on the vulnerability and coping capacity sub-indicator set to anchor the composite index in dimensions directly linked to adaptive capacity and displacement risk, ensuring that the outputs inform policy and resource allocation rather than reproduce abstract risk abstractions.</p>
+        <div class="data-source-meta">
+          <span class="data-meta-item"><span class="data-meta-label">Provider</span> IASC Task Team, European Commission JRC</span>
+          <span class="data-meta-item"><span class="data-meta-label">Coverage</span> 191 countries, annual updates</span>
+          <span class="data-meta-item"><span class="data-meta-label">Last Updated</span> Annual updates</span>
+          <span class="data-meta-item"><span class="data-meta-label">URL</span> <a href="https://drmkc.jrc.ec.europa.eu/inform-index" target="_blank" rel="noopener noreferrer">drmkc.jrc.ec.europa.eu/inform-index</a></span>
+          <span class="data-meta-item"><span class="data-meta-label">Role</span> Hazard, exposure, and coping capacity sub-indicators for composite index construction</span>
+        </div>
+      </div>
+
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Humanitarian Alignment</span>
+          <h3 class="data-source-name">UNHCR-IDC Vulnerability Screening Tool</h3>
+        </div>
+        <p class="data-source-desc">Data science as a tool for human rights and protection is only as effective as its accessibility to the agencies doing protection work. The UNHCR-IDC Vulnerability Screening Tool provides the structural logic that makes this project's outputs immediately usable by humanitarian organizations in the field. The VST's screening dimensions, covering physical protection risks, health and medical vulnerability, gender-based vulnerabilities, and barriers to livelihoods and services, define the categorical framework against which this project's tiered vulnerability scores are calibrated. Alignment with the VST is a deliberate design choice: it ensures that climate-derived signals can be integrated into existing intake and prioritization workflows without requiring agencies to learn a new system. The goal is to extend the benefits of high-resolution environmental monitoring to those most in need of representation, with the VST serving as the bridge between data and decision.</p>
+        <div class="data-source-meta">
+          <span class="data-meta-item"><span class="data-meta-label">Provider</span> United Nations High Commissioner for Refugees (UNHCR)</span>
+          <span class="data-meta-item"><span class="data-meta-label">Last Updated</span> Periodically revised; verify current version at time of access</span>
+          <span class="data-meta-item"><span class="data-meta-label">URL</span> <a href="https://www.unhcr.org/what-we-do/build-better-futures/data-and-innovation/vulnerability-screening" target="_blank" rel="noopener noreferrer">unhcr.org &mdash; Vulnerability Screening</a></span>
+          <span class="data-meta-item"><span class="data-meta-label">Role</span> Tier structure and screening alignment for humanitarian agency compatibility</span>
+        </div>
+      </div>
+
+      <div class="data-source-item">
+        <div class="data-source-header">
+          <span class="data-source-tag">Socioeconomic Context</span>
+          <h3 class="data-source-name">World Bank Development Indicators</h3>
+        </div>
+        <p class="data-source-desc">Climate risk does not operate independently of the social and economic conditions that determine who can adapt and who cannot. World Bank Development Indicators, spanning income, poverty, health outcomes, education, infrastructure access, and governance quality, provide the socioeconomic context necessary to ground vulnerability scores in the material realities of the communities this project aims to protect. These indicators anchor the Principal Component Analysis used to construct spatial cluster typologies, ensuring that groupings of displacement risk reflect measurable dimensions of human welfare rather than geographic proximity alone. Variable selection prioritizes indicators with documented relationships to adaptive capacity, including income per capita, access to improved water and sanitation, under-five mortality, and governance effectiveness, following the weighting approach developed in the preliminary case study.</p>
+        <div class="data-source-meta">
+          <span class="data-meta-item"><span class="data-meta-label">Provider</span> The World Bank Group</span>
+          <span class="data-meta-item"><span class="data-meta-label">Coverage</span> 200+ countries, annual</span>
+          <span class="data-meta-item"><span class="data-meta-label">Last Updated</span> Continuously updated as countries report; major annual release</span>
+          <span class="data-meta-item"><span class="data-meta-label">URL</span> <a href="https://data.worldbank.org/indicator" target="_blank" rel="noopener noreferrer">data.worldbank.org/indicator</a></span>
+          <span class="data-meta-item"><span class="data-meta-label">Role</span> PCA basis variables for spatial cluster typology and adaptive capacity assessment</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─ Visualizations ─────────────────────────────────────────── -->
+  <section id="visualizations">
+    <p class="section-label">Research Visualizations</p>
+
+    <!-- Tab bar -->
+    <div class="viz-tabs" role="tablist" aria-label="Research visualizations">
+      <button class="viz-tab active" role="tab" aria-selected="true" aria-controls="panel-map" id="tab-map">
+        Vulnerability Map
+      </button>
+      <button class="viz-tab" role="tab" aria-selected="false" aria-controls="panel-temporal" id="tab-temporal">
+        Temporal Analysis
+      </button>
+      <button class="viz-tab" role="tab" aria-selected="false" aria-controls="panel-top10" id="tab-top10">
+        Countries in Critical Vulnerability
+      </button>
+      <button class="viz-tab" role="tab" aria-selected="false" aria-controls="panel-clusters" id="tab-clusters">
+        Cluster Analysis
+      </button>
+    </div>
+
+    <!-- Panel: Vulnerability Map -->
+    <div class="viz-panel active" id="panel-map" role="tabpanel" aria-labelledby="tab-map">
+      <div class="viz-panel-header">
+        <div>
+          <p class="viz-panel-title">Global Vulnerability Map</p>
+          <p class="viz-panel-desc">Choropleth map classifying nations by displacement vulnerability tier using INFORM Risk Index and related variables. Built with Plotly; countries are matched by ISO3 code against Natural Earth boundaries.</p>
+        </div>
+        <a href="vulnerability_map.html" target="_blank" rel="noopener noreferrer" class="viz-open-link">
+          Open full page
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      <div class="viz-frame-wrap">
+        <iframe
+          id="frame-map"
+          src="vulnerability_map.html"
+          height="580"
+          title="Global Vulnerability Map"
+          loading="lazy"
+          sandbox="allow-scripts allow-same-origin"
+        ></iframe>
+        <div class="viz-fallback" id="fallback-map" style="display:none;">
+          <svg class="viz-fallback-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p class="viz-fallback-msg">GitHub Pages not yet enabled on this repository. Follow the setup steps above, then reload this page. View directly on <a href="vulnerability_map.html" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: Temporal Analysis -->
+    <div class="viz-panel" id="panel-temporal" role="tabpanel" aria-labelledby="tab-temporal" hidden>
+      <div class="viz-panel-header">
+        <div>
+          <p class="viz-panel-title">Temporal Vulnerability Analysis</p>
+          <p class="viz-panel-desc">Interactive Plotly visualization tracing shifts in vulnerability scores across historical and projected time intervals at the cluster level.</p>
+        </div>
+        <a href="temporal_vulnerability_slider.html" target="_blank" rel="noopener noreferrer" class="viz-open-link">
+          Open full page
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      <div class="viz-frame-wrap">
+        <iframe
+          id="frame-temporal"
+          src="temporal_vulnerability_slider.html"
+          height="560"
+          title="Temporal Vulnerability Analysis"
+          loading="lazy"
+          sandbox="allow-scripts allow-same-origin"
+        ></iframe>
+        <div class="viz-fallback" id="fallback-temporal" style="display:none;">
+          <svg class="viz-fallback-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p class="viz-fallback-msg">GitHub Pages not yet enabled. View directly on <a href="temporal_vulnerability_slider.html" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: Countries in Critical Vulnerability -->
+    <div class="viz-panel" id="panel-top10" role="tabpanel" aria-labelledby="tab-top10" hidden>
+      <div class="viz-panel-header">
+        <div>
+          <p class="viz-panel-title">Countries in Critical Vulnerability</p>
+          <p class="viz-panel-desc">Annual identification of the ten nations bearing the greatest concentration of displacement vulnerability by composite INFORM Risk Index score, tracing year-over-year shifts in where crisis burden falls.</p>
+        </div>
+        <a href="top_10_inform_risk.html" target="_blank" rel="noopener noreferrer" class="viz-open-link">
+          Open full page
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      <div class="viz-frame-wrap">
+        <iframe
+          id="frame-top10"
+          src="top_10_inform_risk.html"
+          height="580"
+          title="Countries in critical vulnerability by INFORM Risk Index score, by year"
+          loading="lazy"
+          sandbox="allow-scripts allow-same-origin"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- Panel: Cluster Analysis -->
+    <div class="viz-panel" id="panel-clusters" role="tabpanel" aria-labelledby="tab-clusters" hidden>
+      <div class="viz-panel-header">
+        <div>
+          <p class="viz-panel-title">UNHCR Vulnerability Clusters</p>
+          <p class="viz-panel-desc">Unsupervised clustering results mapping spatial groupings of displacement risk typologies across the analysis region, derived from UNHCR vulnerability variable set.</p>
+        </div>
+        <a href="assets/vulnerability_tiers_tsne.png" target="_blank" rel="noopener noreferrer" class="viz-open-link">
+          View full image
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+      <div style="padding: 1.5rem; background: var(--surface-alt);">
+        <figure class="cluster-figure">
+          <img
+            src="assets/vulnerability_tiers_tsne.png"
+            alt="UNHCR vulnerability cluster analysis showing spatial groupings of displacement risk typologies"
+            loading="lazy"
+          >
+          <figcaption class="cluster-caption">
+            Cluster typologies produced from unsupervised analysis of UNHCR vulnerability variables. Color groupings reflect latent structure in displacement risk concentration across the regional analysis domain.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- Repository link -->
+    <a href="https://github.com/laketalkemp/ML-Enabled-Displacement-Prediction" class="repo-banner" target="_blank" rel="noopener noreferrer">
+      <div class="repo-info">
+        <span class="repo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 012.5-.35c.85 0 1.7.12 2.5.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.81 0 .27.18.59.69.49A10.27 10.27 0 0022 12.26C22 6.58 17.52 2 12 2z"/></svg>
+        </span>
+        <div>
+          <p class="repo-name">laketalkemp / ML-Enabled-Displacement-Prediction</p>
+          <p class="repo-desc">MIT License &middot; Public Repository</p>
+        </div>
+      </div>
+      <span class="repo-link">
+        View Repository
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </span>
+    </a>
+  </section>
+
+  <!-- ─ Milestones ─────────────────────────────────────────────── -->
+  <section id="milestones">
+    <p class="section-label">Project Milestones</p>
+    <div class="milestone-track" role="list">
+
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot active" aria-label="In progress">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 1</p>
+          <h2 class="milestone-name">UNHCR-Aligned Composite Vulnerability Index and Spatial Correlation Analysis</h2>
+          <p class="milestone-desc">Construction of the composite vulnerability index integrating INFORM Risk Index variables with UNHCR-IDC Vulnerability Screening Tool dimensions, producing tiered vulnerability scores across low, mild, moderate, and severe thresholds. Unsupervised clustering of UNHCR vulnerability variables to identify spatial typologies of displacement risk concentration. Initial spatial correlation analyses relating index scores to documented displacement patterns, with visualizations designed for humanitarian agency review and use.</p>
+          <span class="milestone-status status-active">
+            <span class="status-dot" aria-hidden="true"></span>
+            In Progress
+          </span>
+        </div>
+      </div>
+
+      <div class="milestone" role="listitem">
+        <div class="milestone-dot upcoming" aria-label="Upcoming"></div>
+        <div class="milestone-content">
+          <p class="milestone-number">Milestone 2</p>
+          <h2 class="milestone-name">ERA5 Integration, High-Resolution Downscaling, and Agency-Ready Output Pipeline</h2>
+          <p class="milestone-desc">Integration of ERA5 reanalysis fields through the physics-informed super-resolution generative adversarial network pipeline, incorporating the Thermodynamic Regime Classifier for consistency across diverse climate regimes. Bias correction of downscaled fields against available ground-truth sensor telemetry. Delivery of tiered vulnerability scores at humanitarian-planning spatial resolutions and production of agency-ready data outputs, including documentation designed for use by humanitarian agencies and civil society organizations operating in regions where data scarcity compounds climate risk.</p>
+          <span class="milestone-status status-upcoming">
+            <span class="status-dot" aria-hidden="true"></span>
+            Upcoming
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div><!-- /page -->
+
+<footer>
+  <p class="footer-name">LaKeta L. Kemp</p>
+  <ul class="footer-links">
+    <li><a href="https://laketalkemp.github.io/">Portfolio</a></li>
+    <li><a href="https://laketalkemp.github.io/#research">Research</a></li>
+    <li><a href="mailto:lkemp@ucsd.edu">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+// ─── Tab switching ────────────────────────────────────────────
+const tabs = document.querySelectorAll('.viz-tab');
+const panels = document.querySelectorAll('.viz-panel');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.getAttribute('aria-controls');
+
+    tabs.forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    panels.forEach(p => {
+      p.classList.remove('active');
+      p.hidden = true;
+    });
+
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    const panel = document.getElementById(target);
+    panel.classList.add('active');
+    panel.hidden = false;
+  });
+});
+
+// ─── Iframe load error detection ─────────────────────────────
+// If an iframe fails to load (404 or cross-origin block), show fallback
+const framePairs = [
+  { frame: 'frame-map',       fallback: 'fallback-map' },
+  { frame: 'frame-temporal',  fallback: 'fallback-temporal' },
+  { frame: 'frame-casestudy', fallback: 'fallback-casestudy' },
+];
+
+framePairs.forEach(({ frame, fallback }) => {
+  const el = document.getElementById(frame);
+  const fb = document.getElementById(fallback);
+  if (!el || !fb) return;
+
+  el.addEventListener('load', () => {
+    // Try to detect a 404 page by checking contentDocument
+    try {
+      const doc = el.contentDocument || el.contentWindow.document;
+      // If we can read the document and it's empty or error, show fallback
+      if (doc && doc.title && doc.title.toLowerCase().includes('404')) {
+        el.style.display = 'none';
+        fb.style.display = 'flex';
+      }
+    } catch (e) {
+      // Cross-origin block means Pages IS enabled and serving — this is fine
+    }
+  });
+
+  el.addEventListener('error', () => {
+    el.style.display = 'none';
+    fb.style.display = 'flex';
+  });
+});
+</script>
+
+</body>
+</html>

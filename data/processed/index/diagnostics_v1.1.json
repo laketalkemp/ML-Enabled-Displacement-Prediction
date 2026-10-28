@@ -1,0 +1,69 @@
+{
+  "feature_set": "all8",
+  "features": [
+    "cdi_lack_coping_capacity",
+    "cdi_hazard_exposure",
+    "cdi_risk",
+    "cdi_vulnerability",
+    "inform_lack_coping_capacity",
+    "inform_hazard_exposure",
+    "inform_risk",
+    "inform_vulnerability"
+  ],
+  "imputation": "mean",
+  "n_countries": 191,
+  "n_imputed_countries": 3,
+  "explained_variance_pc1_to_pc3": [
+    0.7439,
+    0.1352,
+    0.0637
+  ],
+  "pc1_loadings": {
+    "cdi_lack_coping_capacity": 0.3532,
+    "cdi_hazard_exposure": 0.2264,
+    "cdi_risk": 0.3914,
+    "cdi_vulnerability": 0.3744,
+    "inform_lack_coping_capacity": 0.355,
+    "inform_hazard_exposure": 0.3235,
+    "inform_risk": 0.4004,
+    "inform_vulnerability": 0.3737
+  },
+  "tier_centroids": [
+    22.6,
+    39.65,
+    57.2,
+    79.65
+  ],
+  "tier_counts": {
+    "1": 61,
+    "2": 49,
+    "3": 53,
+    "4": 28
+  },
+  "silhouette_tiers_on_score": 0.5609,
+  "bootstrap_reps": 500,
+  "mean_tier_stability": 0.9316,
+  "countries_below_80pct_stability": 17,
+  "label_variants_merged": [
+    {
+      "iso3": "CIV",
+      "labels": "Cote d'Ivoire | Côte d’Ivoire"
+    },
+    {
+      "iso3": "SOM",
+      "labels": "Somalia | Somalia, Federal Republic of"
+    },
+    {
+      "iso3": "STP",
+      "labels": "Sao Tome and Principe | São Tomé and Príncipe"
+    },
+    {
+      "iso3": "TUR",
+      "labels": "Turkiye | Türkiye"
+    },
+    {
+      "iso3": "VNM",
+      "labels": "Viet Nam | Vietnam"
+    }
+  ]
+}
