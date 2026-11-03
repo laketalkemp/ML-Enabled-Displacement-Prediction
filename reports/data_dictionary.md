@@ -35,7 +35,7 @@ The JRC files have no country missing from the IMF files. Three countries appear
      | TUR | Turkiye / Türkiye |
      | VNM | Viet Nam / Vietnam |
    - The notebook merged on code *and* name. Each country therefore became two half-empty rows, each filled with column means.
-   - Türkiye ended up in two different tiers (Mild and Moderate). Somalia scored 75.9 and 73.0, when its full data put it at the top of the scale.
+   - Türkiye ended up at two different vulnerability levels (Mild and Moderate). Somalia scored 75.9 and 73.0, when its full data put it at the top of the scale.
    - **v1.1 merges on the ISO3 code only, giving 191 countries.**
 2. **The two sources come from different years.** The latest IMF values are from 2022 and the latest JRC values from 2025, and the index combines them. The `*_year` columns in the output record this.
 3. **The two sources overlap.** Correlations between matching indicators, latest year:
@@ -49,7 +49,7 @@ The JRC files have no country missing from the IMF files. Three countries appear
 
    `inform_risk` is itself built from hazard (r = 0.85), vulnerability (0.92) and coping capacity (0.84). Using all eight indicators therefore counts vulnerability and coping capacity about twice.
    - The pipeline keeps all eight by default, for comparability with v1.0.
-   - `--feature-set inform4` (JRC only) and `--feature-set inform3` (JRC hazard, vulnerability and coping capacity, no composite) are sensitivity options. Each moves 27–28 of 191 countries by one tier (score correlation 0.98).
+   - `--feature-set inform4` (JRC only) and `--feature-set inform3` (JRC hazard, vulnerability and coping capacity, no composite) are sensitivity options. Each moves 27–28 of 191 countries by one level (score correlation 0.98).
    - **Which set to use is a Workshop 1 decision.**
 4. **Imputation.** After the ISO3 fix, three countries are missing all four IMF indicators: Cuba, Liechtenstein and North Korea. They are mean-imputed and flagged (`imputed`, `n_imputed`, `imputed_indicators`).
 
@@ -65,17 +65,17 @@ The JRC files have no country missing from the IMF files. Three countries appear
 | `imputed` | bool | True if any indicator was imputed |
 | `imputed_indicators` | str | Semicolon-separated list of imputed indicators |
 | `vulnerability_score` | float | PC1 of the standardised indicators, rescaled to 0–100. The sign is fixed so that higher means more vulnerable |
-| `tier` | int | 1–4 from K-means (k = 4) on the score, numbered by cluster centroid, so tiers are ordinal |
-| `tier_label` | str | "1 - Low" … "4 - Severe Vulnerability" (labels unchanged from v1.0, pending Week 3 wording review) |
-| `tier_stability` | float | Share of 500 bootstrap refits that put the country in the same tier |
+| `tier` | int | Vulnerability level, 1 = Low to 4 = Severe, from K-means (k = 4) on the score, ordered by cluster centroid. The column name is kept for compatibility; in text, say "vulnerability level" and name the level |
+| `tier_label` | str | "1 - Low" … "4 - Severe Vulnerability", unchanged from v1.0 for compatibility. Reader-facing outputs show "Low vulnerability level" … "Severe vulnerability level" instead |
+| `tier_stability` | float | Share of 500 bootstrap refits that put the country at the same vulnerability level |
 | `tsne_1`, `tsne_2` | float | 2-D t-SNE coordinates (perplexity 30, seed 42), for display only |
 
-`diagnostics_v1.1.json` reports the explained variance, PC1 loadings, tier centroids and counts, the silhouette score and bootstrap stability.
+`diagnostics_v1.1.json` reports the explained variance, PC1 loadings, the centroids and counts of the vulnerability levels, the silhouette score and bootstrap stability.
 
 For v1.1 (all eight indicators):
 - PC1 explains 74.4% of the variance.
 - The silhouette score is 0.56.
-- Mean tier stability is 0.93, and 17 countries fall below 0.80 (`countries_below_80pct_stability` in the diagnostics).
+- Mean stability of the vulnerability levels is 0.93, and 17 countries fall below 0.80 (`countries_below_80pct_stability` in the diagnostics).
 
 `vulnerability_index_longitudinal_2016_2022.csv` has one row per country and year for 2016–2022, the years both sources cover. Scores come from one PCA fitted on all country-years, so values are comparable across years.
 

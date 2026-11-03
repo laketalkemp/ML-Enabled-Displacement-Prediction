@@ -5,13 +5,13 @@ These are the outputs of the original Colab notebook (`notebooks/00_original_col
 | File | Rows | Contents |
 |---|---|---|
 | `v1.0_notebook/merged_raw_inform_data.csv` | 196 | Merged latest-year values of the eight indicators |
-| `v1.0_notebook/processed_vulnerability_tiers.csv` | 196 | The above, plus PCA score, cluster ID, tier and t-SNE coordinates |
+| `v1.0_notebook/processed_vulnerability_tiers.csv` | 196 | The above, plus PCA score, cluster ID, vulnerability level (`UNHCR_Tier`) and t-SNE coordinates |
 
 The table has 196 rows because five countries appear twice (see `reports/data_dictionary.md`, "Known issues").
 
 `python scripts/run_index.py --legacy` reproduces this table from `data/raw/inform/`:
 - scores within 3e-14;
-- identical tiers, cluster IDs and t-SNE coordinates.
+- identical vulnerability levels, cluster IDs and t-SNE coordinates.
 
 `tests/test_index.py` checks this on every run.
 

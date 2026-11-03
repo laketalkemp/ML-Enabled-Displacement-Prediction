@@ -8,7 +8,7 @@ Composite climate-vulnerability index, subnational hazard layers and displacemen
 
 | Component | Status | Where |
 |---|---|---|
-| Country vulnerability index (INFORM + climate-driven INFORM, PCA score, 4 tiers) | v1.1: one row per ISO3, imputation flags, tier stability | `src/hvd/`, `scripts/run_index.py` |
+| Country vulnerability index (INFORM + climate-driven INFORM, PCA score, 4 vulnerability levels) | v1.1: one row per ISO3, imputation flags, stability of each country's level | `src/hvd/`, `scripts/run_index.py` |
 | Reproduction of the original notebook (v1.0) | Exact (tested) | `scripts/run_index.py --legacy`, `tests/` |
 | Dashboard (GitHub Pages) | Regenerated on ISO3 keys | `docs/` |
 | Province layers, proof-of-concept regions | Philippines (82), Afghanistan (34), Bangladesh (64) | `data/processed/regions/`, `data/external/` |
@@ -39,7 +39,7 @@ The steps that need restricted or large data are documented in `data/README.md`:
 ## Layout
 
 ```
-src/hvd/          inform.py (load/merge), index.py (score, tiers), longitudinal.py, viz.py, paths.py
+src/hvd/          inform.py (load/merge), index.py (score, vulnerability levels), longitudinal.py, viz.py, paths.py
 scripts/          run_index.py and the data-preparation scripts above
 data/             raw/, external/, processed/ — see data/README.md for sources, licences, checksums
 baseline/         v1.0 notebook outputs used by the regression tests
@@ -68,5 +68,5 @@ Code is MIT-licensed (`LICENSE`). Please cite the repository using `CITATION.cff
 ## Methods notes and caveats
 
 - **The two sources overlap and differ in year.** The IMF and JRC indicators overlap (r = 0.90–0.94 for vulnerability, coping capacity and risk) and come from different years (2022 vs 2025). Which indicator set to use is open for Workshop 1. See `reports/data_dictionary.md`.
-- **Tiers are ordinal but not crisp.** They are K-means clusters on the score, numbered by centroid. Mean bootstrap stability is 0.93, and 17 countries sit near tier boundaries (stability < 0.80).
+- **Vulnerability levels are ordinal but not crisp.** The four levels (Low, Mild, Moderate, Severe) are K-means clusters on the score, ordered by centroid. The data files keep the column names `tier`, `tier_label` and `tier_stability` for compatibility. Mean bootstrap stability is 0.93, and 17 countries sit near the boundaries between levels (stability < 0.80).
 - **Subnational results combine scales.** They pair subnational hazard exposure with national vulnerability and should be labelled that way.

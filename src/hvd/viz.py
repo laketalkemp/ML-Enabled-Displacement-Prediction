@@ -19,6 +19,9 @@ import plotly.graph_objects as go
 from .paths import NATURAL_EARTH_DIR
 
 TIER_COLORS = {1: "#2ca02c", 2: "#ff7f0e", 3: "#d62728", 4: "#9467bd"}   # as in the original figure
+# Reader-facing name of each group: "vulnerability level", never "tier" (project terminology, Nov 2026).
+# Column names (tier, tier_label, tier_stability) stay for compatibility.
+LEVEL_NAMES = {1: "Low", 2: "Mild", 3: "Moderate", 4: "Severe"}
 HTML_KW = dict(include_plotlyjs="cdn", full_html=True)
 
 
@@ -51,7 +54,8 @@ def _subset(gj: dict, keep: set) -> dict:
 def vulnerability_map(df: pd.DataFrame, path) -> dict:
     gj, units = world_geojson()
     nodata = units[~units["iso3"].isin(df["iso3"]) & (units["iso3"] != "ATA")]
-    d = df.assign(imputed_note=df["imputed"].map({True: "yes, some indicators imputed", False: "no"}))
+    d = df.assign(imputed_note=df["imputed"].map({True: "yes, some indicators imputed", False: "no"}),
+                  level_note=df["tier"].map(lambda t: f"{LEVEL_NAMES[t]} vulnerability level"))
     fig = go.Figure()
     # each geometry is embedded once: territories without a score in one trace, scored countries in the other
     fig.add_trace(go.Choropleth(geojson=_subset(gj, set(nodata["iso3"])), locations=nodata["iso3"], z=[0] * len(nodata),
@@ -60,9 +64,9 @@ def vulnerability_map(df: pd.DataFrame, path) -> dict:
                                 marker_line_color="white", marker_line_width=0.3))
     fig.add_trace(go.Choropleth(geojson=_subset(gj, set(d["iso3"])), locations=d["iso3"], z=d["vulnerability_score"],
                                 zmin=0, zmax=100, colorscale="YlOrRd", colorbar_title="Score (0-100)",
-                                customdata=d[["country", "tier_label", "tier_stability", "imputed_note"]],
+                                customdata=d[["country", "level_note", "tier_stability", "imputed_note"]],
                                 hovertemplate="<b>%{customdata[0]}</b><br>Score %{z:.1f}<br>%{customdata[1]}"
-                                              "<br>Tier stability %{customdata[2]:.0%}<br>Imputed: %{customdata[3]}<extra></extra>",
+                                              "<br>Same level in %{customdata[2]:.0%} of refits<br>Imputed: %{customdata[3]}<extra></extra>",
                                 marker_line_color="white", marker_line_width=0.3))
     fig.update_geos(projection_type="natural earth", projection_rotation_lon=0, center=dict(lon=0, lat=10),
                     lonaxis_range=[-180, 180], lataxis_range=[-60, 85],
@@ -133,8 +137,8 @@ def comparative_metrics(df: pd.DataFrame, labels: dict, path):
 def tsne_png(df: pd.DataFrame, path):
     fig, ax = plt.subplots(figsize=(10, 8))
     for t, g in df.groupby("tier"):
-        ax.scatter(g["tsne_1"], g["tsne_2"], s=60, alpha=0.8, color=TIER_COLORS[t], label=g["tier_label"].iat[0])
-    ax.set_title("t-SNE projection of countries by vulnerability tier (v1.1)")
+        ax.scatter(g["tsne_1"], g["tsne_2"], s=60, alpha=0.8, color=TIER_COLORS[t], label=LEVEL_NAMES[t])
+    ax.set_title("t-SNE projection of countries by vulnerability level (v1.1)")
     ax.set_xlabel("t-SNE dimension 1"); ax.set_ylabel("t-SNE dimension 2")
-    ax.legend(title="Tier", bbox_to_anchor=(1.02, 1), loc="upper left")
+    ax.legend(title="Vulnerability level", bbox_to_anchor=(1.02, 1), loc="upper left")
     fig.tight_layout(); fig.savefig(path, dpi=200); plt.close(fig)

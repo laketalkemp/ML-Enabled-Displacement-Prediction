@@ -680,8 +680,8 @@
     <p class="section-label">Overview</p>
     <div class="prose">
       <p>The global infrastructure for climate risk monitoring exhibits a structural asymmetry that deepens existing inequities: the communities most exposed to climate-driven displacement are, in many cases, the communities least visible to standard climate data products. Sparse ground-station coverage, limited satellite telemetry integration, and spatial resolutions optimized for policy-relevant regional aggregates all contribute to a data environment in which local, site-specific conditions, precisely those conditions that determine whether a household can or cannot remain in place, remain systematically underresolved.</p>
-      <p>This project addresses that asymmetry directly. The Displacement Hotspot Vulnerability Mapping Tool develops a composite vulnerability index pipeline that synthesizes INFORM Risk Index variables with UNHCR-IDC Vulnerability Screening Tool dimensions, producing tiered vulnerability scores at spatial resolutions sufficient for humanitarian agency planning. Methodologically, the project draws on super-resolution generative adversarial network architectures and spatially-aware clustering to extract site-specific signal from coarse satellite inputs, calibrating outputs against available ground-truth sensor data to correct systematic biases inherent to global reanalysis products in heterogeneous terrain.</p>
-      <p>Recognition Justice, the principle that communities must be rendered legible and present within the systems that shape decisions about their welfare, and Distributive Justice, the demand that exposure to climate harm and access to protective resources be evaluated in relation to social structures of advantage and disadvantage, together motivate both the selection of vulnerability dimensions and the design of the output scoring tiers. Outputs are structured for direct use by humanitarian agencies operating in data-scarce regions, where the absence of high-resolution climate data compounds the inequities that displacement itself produces.</p>
+      <p>This project addresses that asymmetry directly. The Displacement Hotspot Vulnerability Mapping Tool develops a composite vulnerability index pipeline that synthesizes INFORM Risk Index variables with UNHCR-IDC Vulnerability Screening Tool dimensions, producing vulnerability scores, grouped into four vulnerability levels, at spatial resolutions sufficient for humanitarian agency planning. Methodologically, the project draws on super-resolution generative adversarial network architectures and spatially-aware clustering to extract site-specific signal from coarse satellite inputs, calibrating outputs against available ground-truth sensor data to correct systematic biases inherent to global reanalysis products in heterogeneous terrain.</p>
+      <p>Recognition Justice, the principle that communities must be rendered legible and present within the systems that shape decisions about their welfare, and Distributive Justice, the demand that exposure to climate harm and access to protective resources be evaluated in relation to social structures of advantage and disadvantage, together motivate both the selection of vulnerability dimensions and the design of the output vulnerability levels. Outputs are structured for direct use by humanitarian agencies operating in data-scarce regions, where the absence of high-resolution climate data compounds the inequities that displacement itself produces.</p>
     </div>
   </section>
 
@@ -692,7 +692,7 @@
       <div class="prose">
         <h3>Composite Index Construction</h3>
         <p>The vulnerability index integrates variables from the INFORM Risk Index framework, including hazard and exposure measures, coping capacity indicators, and population vulnerability dimensions, with the structured screening criteria of the UNHCR-IDC Vulnerability Screening Tool. Variable selection prioritizes indicators available at humanitarian-relevant spatial scales and demonstrably associated with reduced adaptive capacity, drawing on displacement literature to anchor selection decisions in documented mechanisms rather than data availability alone.</p>
-        <p>Tiered scoring is structured across four thresholds — low, mild, moderate, and severe — calibrated to reflect meaningful distinctions in adaptive capacity. Tier boundaries are informed by field research on displacement thresholds and the operational categorizations used by humanitarian agencies in intake and prioritization workflows.</p>
+        <p>Scores are grouped into four vulnerability levels — low, mild, moderate, and severe — calibrated to reflect meaningful distinctions in adaptive capacity. The boundaries between levels are informed by field research on displacement thresholds and the operational categorizations used by humanitarian agencies in intake and prioritization workflows.</p>
         <div class="framework-pills">
           <span class="pill">INFORM Risk Index</span>
           <span class="pill">UNHCR-IDC VST</span>
@@ -770,12 +770,12 @@
           <span class="data-source-tag">Humanitarian Alignment</span>
           <h3 class="data-source-name">UNHCR-IDC Vulnerability Screening Tool</h3>
         </div>
-        <p class="data-source-desc">Data science as a tool for human rights and protection is only as effective as its accessibility to the agencies doing protection work. The UNHCR-IDC Vulnerability Screening Tool provides the structural logic that makes this project's outputs immediately usable by humanitarian organizations in the field. The VST's screening dimensions, covering physical protection risks, health and medical vulnerability, gender-based vulnerabilities, and barriers to livelihoods and services, define the categorical framework against which this project's tiered vulnerability scores are calibrated. Alignment with the VST is a deliberate design choice: it ensures that climate-derived signals can be integrated into existing intake and prioritization workflows without requiring agencies to learn a new system. The goal is to extend the benefits of high-resolution environmental monitoring to those most in need of representation, with the VST serving as the bridge between data and decision.</p>
+        <p class="data-source-desc">Data science as a tool for human rights and protection is only as effective as its accessibility to the agencies doing protection work. The UNHCR-IDC Vulnerability Screening Tool provides the structural logic that makes this project's outputs immediately usable by humanitarian organizations in the field. The VST's screening dimensions, covering physical protection risks, health and medical vulnerability, gender-based vulnerabilities, and barriers to livelihoods and services, define the categorical framework against which this project's vulnerability scores and levels are calibrated. Alignment with the VST is a deliberate design choice: it ensures that climate-derived signals can be integrated into existing intake and prioritization workflows without requiring agencies to learn a new system. The goal is to extend the benefits of high-resolution environmental monitoring to those most in need of representation, with the VST serving as the bridge between data and decision.</p>
         <div class="data-source-meta">
           <span class="data-meta-item"><span class="data-meta-label">Provider</span> United Nations High Commissioner for Refugees (UNHCR)</span>
           <span class="data-meta-item"><span class="data-meta-label">Last Updated</span> Periodically revised; verify current version at time of access</span>
           <span class="data-meta-item"><span class="data-meta-label">URL</span> <a href="https://www.unhcr.org/what-we-do/build-better-futures/data-and-innovation/vulnerability-screening" target="_blank" rel="noopener noreferrer">unhcr.org &mdash; Vulnerability Screening</a></span>
-          <span class="data-meta-item"><span class="data-meta-label">Role</span> Tier structure and screening alignment for humanitarian agency compatibility</span>
+          <span class="data-meta-item"><span class="data-meta-label">Role</span> Vulnerability levels and screening alignment for humanitarian agency compatibility</span>
         </div>
       </div>
 
@@ -822,7 +822,7 @@
       <div class="viz-panel-header">
         <div>
           <p class="viz-panel-title">Global Vulnerability Map</p>
-          <p class="viz-panel-desc">Choropleth map classifying nations by displacement vulnerability tier using INFORM Risk Index and related variables. Built with Plotly; countries are matched by ISO3 code against Natural Earth boundaries.</p>
+          <p class="viz-panel-desc">Choropleth map classifying nations by displacement vulnerability level using INFORM Risk Index and related variables. Built with Plotly; countries are matched by ISO3 code against Natural Earth boundaries.</p>
         </div>
         <a href="vulnerability_map.html" target="_blank" rel="noopener noreferrer" class="viz-open-link">
           Open full page
@@ -953,7 +953,7 @@
         <div class="milestone-content">
           <p class="milestone-number">Milestone 1</p>
           <h2 class="milestone-name">UNHCR-Aligned Composite Vulnerability Index and Spatial Correlation Analysis</h2>
-          <p class="milestone-desc">Construction of the composite vulnerability index integrating INFORM Risk Index variables with UNHCR-IDC Vulnerability Screening Tool dimensions, producing tiered vulnerability scores across low, mild, moderate, and severe thresholds. Unsupervised clustering of UNHCR vulnerability variables to identify spatial typologies of displacement risk concentration. Initial spatial correlation analyses relating index scores to documented displacement patterns, with visualizations designed for humanitarian agency review and use.</p>
+          <p class="milestone-desc">Construction of the composite vulnerability index integrating INFORM Risk Index variables with UNHCR-IDC Vulnerability Screening Tool dimensions, producing vulnerability scores grouped into low, mild, moderate, and severe vulnerability levels. Unsupervised clustering of UNHCR vulnerability variables to identify spatial typologies of displacement risk concentration. Initial spatial correlation analyses relating index scores to documented displacement patterns, with visualizations designed for humanitarian agency review and use.</p>
           <span class="milestone-status status-active">
             <span class="status-dot" aria-hidden="true"></span>
             In Progress
@@ -966,7 +966,7 @@
         <div class="milestone-content">
           <p class="milestone-number">Milestone 2</p>
           <h2 class="milestone-name">ERA5 Integration, High-Resolution Downscaling, and Agency-Ready Output Pipeline</h2>
-          <p class="milestone-desc">Integration of ERA5 reanalysis fields through the physics-informed super-resolution generative adversarial network pipeline, incorporating the Thermodynamic Regime Classifier for consistency across diverse climate regimes. Bias correction of downscaled fields against available ground-truth sensor telemetry. Delivery of tiered vulnerability scores at humanitarian-planning spatial resolutions and production of agency-ready data outputs, including documentation designed for use by humanitarian agencies and civil society organizations operating in regions where data scarcity compounds climate risk.</p>
+          <p class="milestone-desc">Integration of ERA5 reanalysis fields through the physics-informed super-resolution generative adversarial network pipeline, incorporating the Thermodynamic Regime Classifier for consistency across diverse climate regimes. Bias correction of downscaled fields against available ground-truth sensor telemetry. Delivery of vulnerability scores and levels at humanitarian-planning spatial resolutions and production of agency-ready data outputs, including documentation designed for use by humanitarian agencies and civil society organizations operating in regions where data scarcity compounds climate risk.</p>
           <span class="milestone-status status-upcoming">
             <span class="status-dot" aria-hidden="true"></span>
             Upcoming
