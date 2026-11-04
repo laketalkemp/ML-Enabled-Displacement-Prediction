@@ -26,6 +26,10 @@ FEATURE_SETS = {
     "all8": list(inform.SHORT_NAMES.values()),
     "inform4": ["inform_lack_coping_capacity", "inform_hazard_exposure", "inform_risk", "inform_vulnerability"],
     "inform3": ["inform_lack_coping_capacity", "inform_hazard_exposure", "inform_vulnerability"],
+    # Vulnerability + lack of coping capacity only (no hazard, no risk): for testing vulnerability against
+    # hazard impacts without circularity. The first column anchors the sign.
+    "vc4": ["inform_vulnerability", "inform_lack_coping_capacity", "cdi_vulnerability", "cdi_lack_coping_capacity"],
+    "vc2": ["inform_vulnerability", "inform_lack_coping_capacity"],
 }
 
 
@@ -99,7 +103,7 @@ def build_index(feature_set: str = "all8", impute: str = "mean", n_boot: int = 5
         order = np.argsort(kb.cluster_centers_.ravel())
         remap = {int(c): i + 1 for i, c in enumerate(order)}
         agree += np.vectorize(remap.get)(kb.predict(score.reshape(-1, 1))) == tiers
-    df["tier_stability"] = (agree / n_boot).round(3)
+    df["tier_stability"] = (agree / n_boot).round(3) if n_boot else np.nan
 
     if tsne:
         t = TSNE(n_components=2, perplexity=30, random_state=random_state).fit_transform(scaled)
@@ -117,7 +121,7 @@ def build_index(feature_set: str = "all8", impute: str = "mean", n_boot: int = 5
         "tier_counts": {int(k): int(v) for k, v in df["tier"].value_counts().sort_index().items()},
         "silhouette_tiers_on_score": round(float(silhouette_score(score.reshape(-1, 1), tiers)), 4),
         "bootstrap_reps": n_boot,
-        "mean_tier_stability": round(float(df["tier_stability"].mean()), 4),
+        "mean_tier_stability": round(float(df["tier_stability"].mean()), 4) if n_boot else None,
         "countries_below_80pct_stability": int((df["tier_stability"] < 0.8).sum()),
     }
     return df, diagnostics

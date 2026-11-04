@@ -12,6 +12,7 @@ Province source, in order of preference: GADM Admin Units -> GAUL Admin Units (m
 """
 import glob
 import json
+import sys
 import os
 import re
 from pathlib import Path
@@ -38,27 +39,10 @@ for v in full["GADM Admin Units"].dropna():
             g1[e["gid_1"]] = e["name_1"]
 g1.update({"AFG.3_1": "Baghlan", "AFG.5_1": "Bamyan"})
 
-# analysis units and their names/aliases
-afg = pd.read_csv("data/processed/regions/afg_province_crosswalk.csv")
-phl = pd.read_csv("data/processed/regions/phl_province_crosswalk.csv")
-bgd = pd.json_normalize(json.load(open("data/external/geoboundaries/geoBoundaries-BGD-ADM2_simplified.geojson"))["features"])
-extra = {"AFG": {"AF-HEL": ["Helmand"], "AF-HER": ["Herat"], "AF-JOW": ["Jowzjan", "Jauzjan"], "AF-NIM": ["Nimruz"],
-                 "AF-PKA": ["Paktia"], "AF-SAR": ["Sar-e Pol", "Sar-i-Pul", "Saripul"], "AF-DAY": ["Daikundi", "Day Kundi"],
-                 "AF-PAN": ["Panjsher"], "AF-URU": ["Urozgan", "Oruzgan"], "AF-WAR": ["Maidan Wardak", "Maydan Wardak"],
-                 "AF-KNR": ["Konar"], "AF-BAM": ["Bamiyan"], "AF-NUR": ["Nooristan", "Nouristan"]},
-         "PHL": {"PH-NCO": ["North Cotabato"], "PH-00": ["Metropolitan Manila", "Metro Manila", "NCR"],
-                 "PH-COM": ["Davao de Oro"], "PH-DAS": ["Davao Occidental"]},   # GADM 4.1 has no Davao Occidental
-         "BGD": {}}
-
-
-def _aliases(al):
-    return [a.strip() for a in str(al).split(";") if a.strip()] if al == al else []
-
-
-units = {"AFG": {u: [n] + _aliases(al) + extra["AFG"].get(u, []) for u, n, al in zip(afg.unit_id, afg.name, afg.aliases)},
-         "PHL": {u: [n] + _aliases(al) + extra["PHL"].get(u, []) for u, n, al in zip(phl.unit_id, phl.name, phl.aliases)},
-         "BGD": {n: [n] for n in bgd["properties.shapeName"]}}
-units["PHL"].pop("PH-DVO", None)   # folded into Davao del Sur for EM-DAT, matching GADM 4.1
+# analysis units and their names/aliases (shared with tests: src/hvd/stats/locmatch.py)
+sys.path.insert(0, "src")
+from hvd.stats.locmatch import build_units, location_units  # noqa: E402
+units = build_units(".")
 lookup = {iso: {norm(a): u for u, al in d.items() for a in al} for iso, d in units.items()}
 
 
@@ -86,11 +70,10 @@ def assign(row):
         if out:
             return sorted(out), "GAUL"
     if isinstance(row.Location, str):
-        for u, al in units[iso].items():
-            if any(re.search(r"\b" + re.escape(a) + r"\b", row.Location, re.I) for a in al):
-                out.add(u)
+        found, by_region = location_units(iso, row.Location, units)
+        out = {u for u in found if u in units[iso]}
         if out:
-            return sorted(out), "Location text"
+            return sorted(out), "Location text (region)" if by_region else "Location text"
     return [], "unresolved"
 
 

@@ -14,7 +14,10 @@ The repository holds small, openly licensed inputs and derived tables. Large raw
 | `processed/regions/` | yes | Province layers and crosswalks for the Philippines and Afghanistan (`scripts/build_poc_regions.py`) |
 | `processed/drought/` | yes | SPI/SPEI per province or district, 1991–2025 (`scripts/drought_indices.py`) |
 | `processed/index/` | yes | Vulnerability index v1.1, diagnostics, longitudinal scores (`scripts/run_index.py`) |
-| `processed/emdat/` | **no** | EM-DAT event counts per province (`scripts/emdat_province_counts.py`) |
+| `processed/emdat/` | **no** | EM-DAT event counts per province (`scripts/emdat_province_counts.py`) and every statistics output that uses EM-DAT, including IDMC comparisons (`processed/emdat/stats/`) |
+| `processed/cordex/` | yes | CORDEX model evaluation and projected change by province, ensemble summaries and hot spots (`scripts/stats_cordex.py`); no EM-DAT content |
+| `raw/cordex_units/` | **no** | Daily CORDEX precipitation and temperature averaged to provinces, from `scripts/download_cordex.py` (about 430 MB) |
+| `raw/idmc/`, `raw/wdi/`, `raw/worldpop/`, `raw/rwi/` | **no** | Manual downloads, see below |
 
 ## Sources and licences
 
@@ -27,6 +30,11 @@ The repository holds small, openly licensed inputs and derived tables. Large raw
 | geoBoundaries: PHL ADM2, BGD ADM2 | NAMRIA/PSA and BBS via OCHA (HDX COD-AB), packaged by geoBoundaries | CC BY 3.0 IGO (attribution required) | As above, plus OCHA COD-AB for the Philippines and Bangladesh |
 | ERA5-Land monthly means | Copernicus Climate Change Service (C3S) / ECMWF | Copernicus licence: free use with attribution; derived products may be published | Muñoz Sabater, J. (2019), doi:10.24381/cds.68d2bb30 |
 | EM-DAT | CRED / UCLouvain | **Non-commercial use after registration. No redistribution of records or a substantial part.** Until CRED confirms in writing, the public dashboard shows only country × year aggregates | EM-DAT, CRED / UCLouvain, Brussels, Belgium – www.emdat.be |
+| CORDEX regional climate projections | Copernicus Climate Data Store (CORDEX-CORE at 0.22°, South-East Asia and South Asia domains) | Accept the CORDEX licence on the CDS download page; some model runs are for non-commercial use. Only province-level derived statistics are committed | Copernicus Climate Change Service (C3S), CORDEX regional climate model data on single levels, doi:10.24381/cds.bc91edc3 |
+| IDMC Global Internal Displacement Database (disaggregated) | internal-displacement.org | CC BY-NC 4.0: non-commercial use with attribution | Internal Displacement Monitoring Centre (IDMC), GIDD |
+| World Development Indicators (SP.POP.TOTL, NY.GDP.MKTP.CD) | World Bank DataBank | CC BY 4.0 | World Bank, World Development Indicators |
+| WorldPop Global2 population, 2020 (100 m, R2025A) | worldpop.org | CC BY 4.0 | WorldPop (www.worldpop.org) |
+| Relative Wealth Index (Philippines, Bangladesh) | Meta Data for Good, via HDX | CC BY-NC 4.0 | Chi, G. et al. (2022), PNAS 119(3): e2113658119 |
 | GADM 4.1 | gadm.org | Academic and non-commercial use only; no redistribution without permission | Used only locally to join EM-DAT records; never committed |
 
 ## Restricted and large data: how to get them
@@ -44,6 +52,11 @@ The repository holds small, openly licensed inputs and derived tables. Large raw
 
   The second script fixes a known ERA5-Land error: the monthly product's precipitation is wrong for Sep 2022 – Feb 2024 (see `reports/era5land_drought_layer.md`).
 - **Natural Earth:** run `scripts/fetch_natural_earth.py`.
+- **CORDEX:** with the same CDS account, accept the CORDEX licence, then run `scripts/download_cordex.py` (all phases by default; `--phase E` adds the 2026–2040 chunks for the near-term window). It writes one CSV per run, variable and period to `data/raw/cordex_units/`.
+- **IDMC:** download the GIDD "Internal Displacement Disaggregated" export for each year 2008–2025 from internal-displacement.org (the portal allows one year at a time) into `data/raw/idmc/`.
+- **WDI:** export SP.POP.TOTL and NY.GDP.MKTP.CD for all countries, 1960–2025, from World Bank DataBank (CSV, zipped) into `data/raw/wdi/`.
+- **WorldPop:** download the Global2 R2025A 2020 population rasters (100 m, constrained) for PHL, AFG and BGD into `data/raw/worldpop/`.
+- **Relative Wealth Index:** download the Philippines and Bangladesh files from HDX (Meta Data for Good) into `data/raw/rwi/`. Afghanistan is not in the dataset.
 
 ## Committed files (SHA-256, first 16 characters)
 

@@ -14,7 +14,9 @@ Composite climate-vulnerability index, subnational hazard layers and displacemen
 | Province layers, proof-of-concept regions | Philippines (82), Afghanistan (34), Bangladesh (64) | `data/processed/regions/`, `data/external/` |
 | Observed drought layer (ERA5-Land SPI/SPEI, 1991–2025) | Done | `data/processed/drought/`, `scripts/drought_indices.py` |
 | EM-DAT events by province | Script only (data is restricted) | `scripts/emdat_province_counts.py` |
-| Hazard signatures, spatial statistics, validation | Planned (Dec–Jan) | |
+| Statistics: hazard trends, co-occurrence, seasonality, vulnerability vs impacts, spatial clustering, archetypes | v1.2 (code; EM-DAT-derived outputs stay local) | `src/hvd/stats/`, `scripts/stats_country.py`, `scripts/stats_province.py` |
+| Displacement validation (IDMC) and province wealth (Relative Wealth Index) | v1.2 (code) | `scripts/stats_idmc.py` |
+| CORDEX projections: model evaluation and projected change, 2026–2099 | v1.2 (code and outputs) | `scripts/download_cordex.py`, `scripts/stats_cordex.py`, `data/processed/cordex/` |
 
 ## Quick start
 
@@ -26,7 +28,7 @@ python -m pip install -r requirements.txt && python -m pip install -e .
 
 python scripts/run_index.py            # index v1.1 + dashboard outputs (about 15 s)
 python scripts/run_index.py --legacy   # reproduce the v1.0 notebook table
-pytest -q                              # 9 tests, including the v1.0 reproduction
+pytest -q                              # index tests (including the v1.0 reproduction) and statistics tests
 ```
 
 The steps that need restricted or large data are documented in `data/README.md`:
@@ -35,6 +37,8 @@ The steps that need restricted or large data are documented in `data/README.md`:
 - `scripts/drought_indices.py`
 - `scripts/emdat_province_counts.py` (your own EM-DAT export)
 - `scripts/build_poc_regions.py`
+- the statistics (v1.2), in this order, once the inputs in `data/README.md` are in place:
+  `scripts/stats_country.py`, `scripts/stats_province.py`, `scripts/stats_idmc.py`, `scripts/download_cordex.py` (CDS API key; about a day), `scripts/stats_cordex.py --units data/raw/cordex_units`, then `scripts/make_stats_figures.py` and `scripts/make_cordex_figures.py`
 
 ## Layout
 

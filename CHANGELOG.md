@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.2.0 (November 2026)
+
+**Statistics** (`src/hvd/stats/`, `scripts/stats_*.py`, `tests/test_stats.py`)
+- Hazard trends (negative binomial with a country fixed effect, high-impact refit), same-year co-occurrence with permutation tests, seasonality (Rayleigh test).
+- Vulnerability against disaster impacts with a two-part model on a vulnerability and coping-capacity-gap sub-index (`vc4`), so hazard exposure is a control rather than part of the score.
+- IDMC displacement validation (country means, two-part and Poisson models, out-of-sample years) and IDMC displacement placed in provinces; province wealth from the Relative Wealth Index (Philippines and Bangladesh).
+- Spatial statistics: Moran's I, LISA, Getis-Ord Gi* and bivariate LISA, with permutation inference and FDR control; hazard archetypes for countries and provinces.
+- CORDEX: download script, model evaluation against ERA5-Land, projected change for 2026–2045, 2041–2070 and 2071–2099 under RCP2.6 and RCP8.5 (SPI/SPEI-6, CDD, Rx5day, R95p, hot days, warming), run agreement, a bias-screened sensitivity and hot spots. Outputs in `data/processed/cordex/`.
+- New dependencies: statsmodels, esda, libpysal, rasterio.
+
+**Data use**
+- Every output derived from EM-DAT stays in the ignored `data/processed/emdat/`. IDMC, WorldPop, WDI and Relative Wealth Index downloads are documented in `data/README.md` and not committed.
+
 ## v1.1.2 (November 2, 2026)
 
 **Wording**

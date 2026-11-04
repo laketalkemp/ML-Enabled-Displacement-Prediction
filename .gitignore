@@ -10,6 +10,16 @@ data/processed/emdat/*
 **/*gadm*.zip
 
 # --- Large raw downloads: fetched by scripts (see data/README.md) ---------------------
+# Downloaded by hand or by script; licences allow use but the files are large or non-commercial (see data/README.md).
+data/raw/cordex_units/
+data/raw/idmc/*
+!data/raw/idmc/README.md
+data/raw/wdi/*
+!data/raw/wdi/README.md
+data/raw/worldpop/*
+!data/raw/worldpop/README.md
+data/raw/rwi/*
+!data/raw/rwi/README.md
 data/raw/era5land/*
 !data/raw/era5land/README.md
 data/raw/natural_earth/ne_10m_*.zip

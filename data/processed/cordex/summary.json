@@ -1,0 +1,9 @@
+{
+ "pieces": 804,
+ "screened_out_runs": [
+  "PHL/gerics_remo2015/mohc_hadgem2_es",
+  "PHL/ictp_regcm4_7/mohc_hadgem2_es",
+  "PHL/ictp_regcm4_7/mpi_m_mpi_esm_mr"
+ ],
+ "runs_with_future": 18
+}
