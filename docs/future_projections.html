@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CORDEX Near-Term Projections 2026–2045</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    min-height: 100%;
+    background: #09131C;
+    color: #D6E4EF;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+  body { padding: 1.25rem 1.5rem 1rem; }
+
+  .chart-header { margin-bottom: 1rem; }
+  .chart-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #D6E4EF;
+    line-height: 1.4;
+  }
+  .chart-subtitle {
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: #6A8AA8;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* 4-panel dot plot grid */
+  .panels {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-bottom: 1px solid #1A2D40;
+    margin-bottom: 0.75rem;
+  }
+  .panel {
+    padding: 0 0.75rem 1rem;
+    border-left: 1px solid #1A2D40;
+  }
+  .panel:first-child { border-left: none; padding-left: 0; }
+
+  .panel-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #97C8D8;
+    text-align: center;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #1A2D40;
+    margin-bottom: 0.6rem;
+    min-height: 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.3;
+  }
+
+  /* Row for each region */
+  .region-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+  }
+  .region-label {
+    font-size: 0.72rem;
+    color: #6A8AA8;
+    width: 0;
+    overflow: visible;
+    white-space: nowrap;
+    display: none; /* only show in first panel */
+  }
+  .panel:first-child .region-label { display: block; }
+
+  /* SVG dot + range line */
+  svg.dot-chart {
+    overflow: visible;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* Value label */
+  .val-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+  }
+  .val-rcp85 {
+    font-size: 0.7rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    color: #D6E4EF;
+  }
+  .val-rcp26 {
+    font-size: 0.65rem;
+    font-family: 'IBM Plex Mono', monospace;
+    color: #6A8AA8;
+  }
+
+  /* Tabular layout per panel/region */
+  .dot-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+    min-height: 2.1rem;
+  }
+  .dot-plot-cell { position: relative; height: 2.1rem; }
+  .values-cell {
+    text-align: right;
+    min-width: 56px;
+  }
+  .v85 {
+    display: block;
+    font-size: 0.72rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    color: #D6E4EF;
+    line-height: 1;
+  }
+  .v26 {
+    display: block;
+    font-size: 0.64rem;
+    font-family: 'IBM Plex Mono', monospace;
+    color: #6A8AA8;
+    line-height: 1;
+    margin-top: 0.1rem;
+  }
+
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+    border-top: 1px solid #1A2D40;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    color: #6A8AA8;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-dot.rcp85 { background: #1A5F9E; }
+  .legend-dot.rcp26 { background: transparent; border: 2px solid #5A7A96; }
+  .legend-dot.uncertain { background: transparent; border: 2px solid #5A7A96; border-radius: 50%; position: relative; }
+  /* hollow = uncertain symbol */
+  .legend-hollow {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid #97C8D8;
+    flex-shrink: 0;
+  }
+
+  .attribution {
+    margin-top: 0.6rem;
+    font-size: 0.63rem;
+    color: #4A6880;
+    line-height: 1.5;
+    padding-top: 0.4rem;
+    border-top: 1px solid #1A2D40;
+  }
+
+  @media (max-width: 600px) {
+    .panels { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="chart-header">
+  <p class="chart-title">Projected change relative to 1991–2020 · Near-term 2026–2045</p>
+  <p class="chart-subtitle">CORDEX · 12 regional model runs · RCP 2.6 (low emissions) and RCP 8.5 (high emissions)</p>
+</div>
+
+<div class="panels" id="panels"></div>
+
+<div class="legend">
+  <div class="legend-item">
+    <svg width="28" height="10" aria-hidden="true">
+      <line x1="0" y1="5" x2="28" y2="5" stroke="#1A5F9E" stroke-width="2"/>
+      <circle cx="14" cy="5" r="5" fill="#1A5F9E"/>
+    </svg>
+    RCP 8.5 (high emissions)
+  </div>
+  <div class="legend-item">
+    <svg width="28" height="10" aria-hidden="true">
+      <line x1="0" y1="5" x2="28" y2="5" stroke="#5A7A96" stroke-width="2"/>
+      <circle cx="14" cy="5" r="4.5" fill="#09131C" stroke="#8AAAC0" stroke-width="2"/>
+    </svg>
+    RCP 2.6 (low emissions)
+  </div>
+  <div class="legend-item">
+    <svg width="12" height="12" aria-hidden="true">
+      <circle cx="6" cy="6" r="5" fill="#09131C" stroke="#97C8D8" stroke-width="2"/>
+    </svg>
+    Hollow: &lt; 5 of 6 runs agree on direction
+  </div>
+</div>
+
+<p class="attribution">
+  Generated using Copernicus Climate Change Service information (2026). CORDEX: doi:10.24381/cds.bc91edc3.
+  Near-term period 2026–2045 relative to 1991–2020 historical baseline. Regions named by lead displacement hazard.
+</p>
+
+<script>
+  // Data structure: for each metric, values per region per scenario
+  // uncertain = hollow dot (fewer than 5 of 6 runs agree on direction)
+  const METRICS = [
+    {
+      title: 'Warming\n(°C)',
+      unit: '°C',
+      xmin: 0, xmax: 2.2,
+      zeroline: false,
+      data: [
+        // Philippines (typhoons)
+        { rcp26: { val: 0.6, uncertain: false }, rcp85: { val: 0.8, uncertain: false } },
+        // Afghanistan (drought)
+        { rcp26: { val: 1.1, uncertain: false }, rcp85: { val: 1.4, uncertain: false } },
+        // Bangladesh (flooding)
+        { rcp26: { val: 0.7, uncertain: false }, rcp85: { val: 1.0, uncertain: false } }
+      ]
+    },
+    {
+      title: 'Hot days\na year',
+      unit: ' days',
+      xmin: 0, xmax: 100,
+      zeroline: false,
+      data: [
+        { rcp26: { val: 33, uncertain: false }, rcp85: { val: 59, uncertain: false } },
+        { rcp26: { val: 13, uncertain: false }, rcp85: { val: 18, uncertain: false } },
+        { rcp26: { val: 13, uncertain: false }, rcp85: { val: 20, uncertain: false } }
+      ]
+    },
+    {
+      title: 'Drought months\n(percentage points)',
+      unit: ' pp',
+      xmin: -5, xmax: 25,
+      zeroline: true,
+      data: [
+        { rcp26: { val: 5.5,  uncertain: true  }, rcp85: { val: 3.8, uncertain: true  } },
+        { rcp26: { val: 2.4,  uncertain: false }, rcp85: { val: 1.5, uncertain: true  } },
+        { rcp26: { val: -0.7, uncertain: true  }, rcp85: { val: 3.6, uncertain: false } }
+      ]
+    },
+    {
+      title: 'Heaviest 5-day\nrainfall (%)',
+      unit: '%',
+      xmin: -10, xmax: 18,
+      zeroline: true,
+      data: [
+        { rcp26: { val:  1.6, uncertain: true  }, rcp85: { val: -0.4, uncertain: true  } },
+        { rcp26: { val: -2.2, uncertain: true  }, rcp85: { val:  1.7, uncertain: false } },
+        { rcp26: { val:  3.2, uncertain: false }, rcp85: { val:  2.8, uncertain: false } }
+      ]
+    }
+  ];
+
+  const REGIONS = [
+    'Philippines\n(typhoons)',
+    'Afghanistan\n(drought)',
+    'Bangladesh\n(flooding)'
+  ];
+
+  const REGION_COLORS = ['#2D7DAD', '#4A97C8', '#97C8D8'];
+
+  const panelsEl = document.getElementById('panels');
+
+  METRICS.forEach((metric, mi) => {
+    const panel = document.createElement('div');
+    panel.className = 'panel';
+
+    // Panel title
+    const titleEl = document.createElement('div');
+    titleEl.className = 'panel-title';
+    titleEl.textContent = metric.title.replace('\n', ' ');
+    panel.appendChild(titleEl);
+
+    // One row per region
+    metric.data.forEach((d, ri) => {
+      const regionName = REGIONS[ri].replace('\n', ' ');
+
+      // Container
+      const row = document.createElement('div');
+      row.style.cssText = 'margin-bottom:0.9rem;';
+
+      // Region label (only on first panel)
+      if (mi === 0) {
+        const rl = document.createElement('div');
+        rl.style.cssText = 'font-size:0.7rem;color:#6A8AA8;margin-bottom:0.2rem;font-weight:500;';
+        rl.textContent = regionName;
+        row.appendChild(rl);
+      }
+
+      // Dot chart SVG
+      const svgW = 100, svgH = 28;
+      const range = metric.xmax - metric.xmin;
+      const toX = v => ((v - metric.xmin) / range) * svgW;
+      const zeroX = toX(0);
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', svgH);
+      svg.setAttribute('aria-label', `${regionName}: RCP2.6 ${formatVal(d.rcp26.val, metric.unit)}, RCP8.5 ${formatVal(d.rcp85.val, metric.unit)}`);
+      svg.setAttribute('role', 'img');
+      svg.style.cssText = 'display:block;overflow:visible;';
+
+      const svgNS = 'http://www.w3.org/2000/svg';
+
+      // Zero line (for diverging metrics)
+      if (metric.zeroline) {
+        const zl = document.createElementNS(svgNS, 'line');
+        zl.setAttribute('x1', zeroX); zl.setAttribute('y1', 0);
+        zl.setAttribute('x2', zeroX); zl.setAttribute('y2', svgH);
+        zl.setAttribute('stroke', '#2A3F52'); zl.setAttribute('stroke-width', '1');
+        svg.appendChild(zl);
+      }
+
+      // Connecting line between the two dots
+      const v26x = toX(d.rcp26.val);
+      const v85x = toX(d.rcp85.val);
+      const midY = svgH / 2;
+
+      const connLine = document.createElementNS(svgNS, 'line');
+      connLine.setAttribute('x1', Math.min(v26x, v85x));
+      connLine.setAttribute('y1', midY);
+      connLine.setAttribute('x2', Math.max(v26x, v85x));
+      connLine.setAttribute('y2', midY);
+      connLine.setAttribute('stroke', '#1A3550');
+      connLine.setAttribute('stroke-width', '2');
+      svg.appendChild(connLine);
+
+      // RCP 2.6 dot (hollow or filled)
+      const dot26 = document.createElementNS(svgNS, 'circle');
+      dot26.setAttribute('cx', v26x);
+      dot26.setAttribute('cy', midY);
+      dot26.setAttribute('r', '4.5');
+      if (d.rcp26.uncertain) {
+        dot26.setAttribute('fill', '#09131C');
+        dot26.setAttribute('stroke', '#8AAAC0');
+        dot26.setAttribute('stroke-width', '2');
+      } else {
+        dot26.setAttribute('fill', '#6A8AA8');
+        dot26.setAttribute('stroke', 'none');
+      }
+      svg.appendChild(dot26);
+
+      // RCP 8.5 dot (hollow or filled)
+      const dot85 = document.createElementNS(svgNS, 'circle');
+      dot85.setAttribute('cx', v85x);
+      dot85.setAttribute('cy', midY);
+      dot85.setAttribute('r', '5.5');
+      if (d.rcp85.uncertain) {
+        dot85.setAttribute('fill', '#09131C');
+        dot85.setAttribute('stroke', '#97C8D8');
+        dot85.setAttribute('stroke-width', '2');
+      } else {
+        dot85.setAttribute('fill', '#1A5F9E');
+        dot85.setAttribute('stroke', 'none');
+      }
+      svg.appendChild(dot85);
+
+      row.appendChild(svg);
+
+      // Value labels
+      const vals = document.createElement('div');
+      vals.style.cssText = 'display:flex;justify-content:space-between;margin-top:0.15rem;';
+
+      const v85el = document.createElement('span');
+      v85el.style.cssText = 'font-size:0.7rem;font-family:"IBM Plex Mono",monospace;font-weight:600;color:#D6E4EF;';
+      v85el.textContent = formatVal(d.rcp85.val, metric.unit);
+      v85el.title = `RCP 8.5: ${formatVal(d.rcp85.val, metric.unit)}${d.rcp85.uncertain ? ' (uncertain direction)' : ''}`;
+
+      const v26el = document.createElement('span');
+      v26el.style.cssText = 'font-size:0.65rem;font-family:"IBM Plex Mono",monospace;color:#6A8AA8;';
+      v26el.textContent = formatVal(d.rcp26.val, metric.unit);
+      v26el.title = `RCP 2.6: ${formatVal(d.rcp26.val, metric.unit)}${d.rcp26.uncertain ? ' (uncertain direction)' : ''}`;
+
+      vals.appendChild(v85el);
+      vals.appendChild(v26el);
+      row.appendChild(vals);
+
+      panel.appendChild(row);
+    });
+
+    panelsEl.appendChild(panel);
+  });
+
+  function formatVal(v, unit) {
+    const prefix = v > 0 ? '+' : '';
+    // Show one decimal for small values, integer for large
+    const display = Math.abs(v) >= 10 ? Math.round(v) : v.toFixed(1);
+    return `${prefix}${display}${unit}`;
+  }
+</script>
+</body>
+</html>
