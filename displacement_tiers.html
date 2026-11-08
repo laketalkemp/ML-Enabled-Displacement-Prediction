@@ -1,274 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Displacement and Vulnerability Tiers</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      font-family: 'IBM Plex Sans', system-ui, sans-serif;
-      background: #09131C;
-      color: #E2EBF5;
-      min-height: 100%;
-      overflow-x: hidden;
-    }
-
-    body {
-      padding: 1.75rem 1.75rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    /* ─── Header ─── */
-    .hdr {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    .hdr-title {
-      font-size: 1rem;
-      font-weight: 500;
-      line-height: 1.35;
-      color: #E2EBF5;
-    }
-    .hdr-sub {
-      font-size: 0.75rem;
-      color: #8CAABF;
-      line-height: 1.65;
-      margin-top: 0.3rem;
-      max-width: 56ch;
-    }
-    .source-badge {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #27ADBA;
-      background: rgba(39,173,186,0.1);
-      border: 1px solid rgba(39,173,186,0.25);
-      padding: 0.3em 0.7em;
-      white-space: nowrap;
-      flex-shrink: 0;
-      align-self: flex-start;
-    }
-
-    /* ─── Headline comparison ─── */
-    .compare {
-      display: grid;
-      grid-template-columns: 1fr 7rem 1fr;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 1.375rem 1rem;
-      background: rgba(255,255,255,0.025);
-      border: 1px solid #1C3448;
-    }
-
-    .tier-block { text-align: center; }
-
-    .tier-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #536E82;
-      margin-bottom: 0.5rem;
-    }
-
-    .tier-num {
-      font-size: clamp(2.25rem, 5vw, 3.25rem);
-      font-weight: 300;
-      line-height: 1;
-      letter-spacing: -0.02em;
-      font-variant-numeric: tabular-nums;
-    }
-    .tier-num.low  { color: #27ADBA; }
-    .tier-num.sev  { color: #CF912E; }
-
-    .tier-unit {
-      font-size: 0.6875rem;
-      color: #536E82;
-      line-height: 1.5;
-      margin-top: 0.4rem;
-    }
-
-    /* ─── Ratio cell ─── */
-    .ratio-cell { text-align: center; }
-    .ratio-num {
-      font-size: clamp(1.875rem, 4vw, 2.625rem);
-      font-weight: 600;
-      color: #E2EBF5;
-      line-height: 1;
-      letter-spacing: -0.02em;
-    }
-    .ratio-denom {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #8CAABF;
-      margin-top: 0.3rem;
-      line-height: 1.4;
-    }
-
-    /* ─── Section label ─── */
-    .section-lbl {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #27ADBA;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .section-lbl::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #1C3448;
-    }
-
-    /* ─── Model table ─── */
-    .model-tbl {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8125rem;
-    }
-    .model-tbl thead th {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #3D576B;
-      font-weight: 400;
-      text-align: left;
-      padding: 0 1rem 0.5rem 0;
-      border-bottom: 1px solid #1C3448;
-    }
-    .model-tbl thead th:last-child { text-align: left; }
-    .model-tbl tbody td {
-      padding: 0.6rem 1rem 0.6rem 0;
-      border-bottom: 1px solid rgba(28,52,72,0.45);
-      color: #8CAABF;
-      line-height: 1.5;
-      vertical-align: top;
-    }
-    .model-tbl tbody tr:last-child td { border-bottom: none; }
-    .model-tbl td.val {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #E2EBF5;
-      white-space: nowrap;
-    }
-    .model-tbl td.ci {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.6875rem;
-      color: #3D576B;
-      white-space: nowrap;
-    }
-    .model-tbl td.note {
-      font-size: 0.6875rem;
-      color: #3D576B;
-    }
-
-    /* ─── Footer note ─── */
-    .fnote {
-      font-size: 0.6875rem;
-      color: #3D576B;
-      line-height: 1.65;
-      border-top: 1px solid #1C3448;
-      padding-top: 0.75rem;
-    }
-    .fnote strong { color: #536E82; font-weight: 500; }
-
-    @media (max-width: 480px) {
-      body { padding: 1.25rem 1rem; }
-      .compare { grid-template-columns: 1fr; gap: 1rem; }
-      .ratio-cell { order: -1; }
-      .ratio-num { font-size: 2rem; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Displacement by Vulnerability Level</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: #09131C;
+    color: #D6E4EF;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.5rem 1rem;
+    gap: 0;
+  }
+  .chart-header { margin-bottom: 0.5rem; }
+  .chart-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #D6E4EF;
+    line-height: 1.4;
+    max-width: 540px;
+  }
+  .chart-subtitle {
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: #6A8AA8;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  #chart {
+    flex: 1 1 auto;
+    min-height: 320px;
+  }
+  .stat-row {
+    display: flex;
+    gap: 2rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #1A2D40;
+    flex-wrap: wrap;
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 0.1rem; }
+  .stat-label { font-size: 0.68rem; color: #6A8AA8; text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat-value { font-size: 0.85rem; font-weight: 600; color: #97C8D8; font-family: 'IBM Plex Mono', monospace; }
+  .attribution {
+    margin-top: 0.6rem;
+    font-size: 0.65rem;
+    color: #4A6880;
+    line-height: 1.5;
+    border-top: 1px solid #1A2D40;
+    padding-top: 0.5rem;
+  }
+</style>
 </head>
 <body>
+<div class="chart-header">
+  <p class="chart-title">Median displaced per 100,000 a year, by vulnerability level (score 0–100)</p>
+  <p class="chart-subtitle">Weather-related internal displacement · IDMC GIDD 2008–2025</p>
+</div>
 
-  <!-- Header -->
-  <div class="hdr">
-    <div>
-      <p class="hdr-title">Weather-Related Displacement by Vulnerability Tier</p>
-      <p class="hdr-sub">IDMC displacement counts, an outcome not used in constructing the index, rise steeply with composite vulnerability score, providing independent validation of the index's predictive structure.</p>
-    </div>
-    <span class="source-badge">IDMC GIDD &middot; 2008–2025</span>
+<div id="chart"></div>
+
+<div class="stat-row">
+  <div class="stat-item">
+    <span class="stat-label">Severe / Low ratio</span>
+    <span class="stat-value">17.5×</span>
   </div>
-
-  <!-- 17× comparison -->
-  <div class="compare">
-    <div class="tier-block">
-      <p class="tier-label">Low Vulnerability Tier</p>
-      <p class="tier-num low">19</p>
-      <p class="tier-unit">displaced per 100,000<br>people per year (median)</p>
-    </div>
-    <div class="ratio-cell">
-      <p class="ratio-num">17&times;</p>
-      <p class="ratio-denom">more<br>in Severe<br>tier</p>
-    </div>
-    <div class="tier-block">
-      <p class="tier-label">Severe Vulnerability Tier</p>
-      <p class="tier-num sev">336</p>
-      <p class="tier-unit">displaced per 100,000<br>people per year (median)</p>
-    </div>
+  <div class="stat-item">
+    <span class="stat-label">Per 10-pt score increase</span>
+    <span class="stat-value">+28–34% displacement</span>
   </div>
+  <div class="stat-item">
+    <span class="stat-label">Countries in Severe level</span>
+    <span class="stat-value">≈ 30 of 191</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-label">Controls applied</span>
+    <span class="stat-value">Hazard · Population · Year</span>
+  </div>
+</div>
 
-  <!-- Model results -->
-  <p class="section-lbl">Statistical model &middot; per 10-point rise in composite vulnerability score</p>
+<p class="attribution">
+  IDMC: Internal Displacement Monitoring Centre, Global Internal Displacement Database, CC BY-NC 4.0. ·
+  Vulnerability levels: INFORM Risk Index v1.1, European Commission Joint Research Centre; IMF Climate-driven INFORM. ·
+  Outcome data not used in index construction.
+</p>
 
-  <table class="model-tbl" aria-label="Model estimates of displacement per 10-point vulnerability increase">
-    <thead>
-      <tr>
-        <th>Outcome</th>
-        <th>Ratio</th>
-        <th>95% CI</th>
-        <th>Notes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Displacement per person (country-year means)</td>
-        <td class="val">&times;1.34</td>
-        <td class="ci">1.15 – 1.55</td>
-        <td class="note">Main estimate; Poisson GLM</td>
-      </tr>
-      <tr>
-        <td>Any displacement event in a year (odds)</td>
-        <td class="val">&times;1.12</td>
-        <td class="ci">1.00 – 1.26</td>
-        <td class="note">Logistic; 183 countries</td>
-      </tr>
-      <tr>
-        <td>People displaced when displacement occurs</td>
-        <td class="val">&times;1.28</td>
-        <td class="ci">1.11 – 1.48</td>
-        <td class="note">Conditional on event</td>
-      </tr>
-      <tr>
-        <td>People displaced, controlling for EM-DAT exposed</td>
-        <td class="val">&times;1.21</td>
-        <td class="ci">1.08 – 1.35</td>
-        <td class="note">Adjusted for physical exposure</td>
-      </tr>
-    </tbody>
-  </table>
+<script>
+  const categories = ['Low<br><span style="font-size:0.85em">< 31</span>',
+                       'Mild<br><span style="font-size:0.85em">31–48</span>',
+                       'Moderate<br><span style="font-size:0.85em">48–68</span>',
+                       'Severe<br><span style="font-size:0.85em">≥ 68</span>'];
+  const values     = [19.2, 89.8, 124.7, 335.5];
+  const labels     = ['19', '90', '125', '336'];
 
-  <!-- Footnote -->
-  <p class="fnote">
-    <strong>Source:</strong> IDMC Global Internal Displacement Database (GIDD), weather-related displacement events 2008–2025, 183 countries. Controls: INFORM hazard exposure subscores, log population, year fixed effects. Total displacement counts are excluded from the main model: they are dominated by China, India, the Philippines, Pakistan, and the United States, where large-scale pre-emptive evacuations inflate records independently of harm. <strong>Cross-dataset agreement:</strong> IDMC and EM-DAT rank countries alike (Spearman &rho; = 0.74). Somalia is the highest-scoring country in INFORM Risk Index v1.1 (composite score 100) following the ISO3-code correction applied in October 2026.
-  </p>
+  // Sequential single-hue blue, light → dark on dark surface
+  const barColors  = ['#4A97C8', '#2F79B2', '#1A5F9E', '#0E4580'];
 
+  const trace = {
+    type: 'bar',
+    x: categories,
+    y: values,
+    marker: { color: barColors, line: { width: 0 } },
+    text: labels,
+    textposition: 'outside',
+    textfont: { family: "'IBM Plex Mono', monospace", size: 15, color: '#D6E4EF', weight: 'bold' },
+    hovertemplate: '<b>%{x}</b><br>Median displacement: <b>%{y}</b> per 100,000 / yr<extra></extra>',
+    cliponaxis: false
+  };
+
+  const layout = {
+    paper_bgcolor: '#09131C',
+    plot_bgcolor:  '#09131C',
+    margin: { t: 20, r: 24, b: 56, l: 48 },
+    xaxis: {
+      tickfont: { family: "'IBM Plex Sans', sans-serif", size: 12, color: '#6A8AA8' },
+      showline: false,
+      zeroline: false,
+      showgrid: false,
+      tickangle: 0
+    },
+    yaxis: {
+      title: { text: 'Displaced per 100,000 / year (median)', font: { family: "'IBM Plex Sans'", size: 10.5, color: '#4A6880' } },
+      tickfont: { family: "'IBM Plex Mono', monospace", size: 10.5, color: '#4A6880' },
+      gridcolor: '#152335',
+      gridwidth: 1,
+      showline: false,
+      zeroline: false,
+      range: [0, 400]
+    },
+    bargap: 0.42,
+    showlegend: false,
+    font: { family: "'IBM Plex Sans', sans-serif" },
+    hoverlabel: {
+      bgcolor: '#1A2D40',
+      bordercolor: '#2D4A60',
+      font: { family: "'IBM Plex Sans'", size: 12, color: '#D6E4EF' }
+    }
+  };
+
+  const config = { responsive: true, displayModeBar: false };
+  Plotly.newPlot('chart', [trace], layout, config);
+</script>
 </body>
 </html>
