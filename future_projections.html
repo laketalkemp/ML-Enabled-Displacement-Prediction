@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORDEX Regional Climate Projections</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: 'IBM Plex Sans', system-ui, sans-serif;
+      background: #09131C;
+      color: #E2EBF5;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      padding: 1.75rem 1.75rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ─── Header ─── */
+    .hdr {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .hdr-title {
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+    .hdr-sub {
+      font-size: 0.75rem;
+      color: #8CAABF;
+      line-height: 1.65;
+      margin-top: 0.3rem;
+      max-width: 56ch;
+    }
+    .badge-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+    .badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3em 0.7em;
+      white-space: nowrap;
+    }
+    .badge-teal {
+      color: #27ADBA;
+      background: rgba(39,173,186,0.1);
+      border: 1px solid rgba(39,173,186,0.25);
+    }
+    .badge-amber {
+      color: #CF912E;
+      background: rgba(207,145,46,0.1);
+      border: 1px solid rgba(207,145,46,0.25);
+    }
+
+    /* ─── Scenario note ─── */
+    .scenario-row {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .scenario-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.6875rem;
+      color: #8CAABF;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-rcp85 { background: #CF912E; }
+    .dot-rcp26 { background: #27ADBA; opacity: 0.6; }
+
+    /* ─── Comparison table ─── */
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+
+    .cmp-table thead th {
+      padding: 0 0.5rem 0.625rem;
+      border-bottom: 2px solid #1C3448;
+      text-align: center;
+      vertical-align: bottom;
+    }
+    .cmp-table thead th:first-child {
+      text-align: left;
+      padding-left: 0;
+      width: 38%;
+    }
+
+    /* Region header cells */
+    .region-hdr { text-align: center; }
+    .region-name {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #E2EBF5;
+      display: block;
+    }
+    .region-hazard {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.4875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #3D576B;
+      display: block;
+      margin-top: 0.2rem;
+    }
+
+    /* Column header label */
+    .col-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #3D576B;
+      font-weight: 400;
+    }
+
+    /* Data rows */
+    .cmp-table tbody td {
+      padding: 0.5rem 0.5rem;
+      border-bottom: 1px solid rgba(28,52,72,0.4);
+      text-align: center;
+      vertical-align: middle;
+    }
+    .cmp-table tbody td:first-child {
+      text-align: left;
+      padding-left: 0;
+    }
+    .cmp-table tbody tr:last-child td { border-bottom: none; }
+
+    /* Row metric name */
+    .metric-name {
+      font-size: 0.8125rem;
+      color: #8CAABF;
+      line-height: 1.4;
+    }
+    .metric-unit {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5625rem;
+      color: #3D576B;
+      display: block;
+      margin-top: 0.1rem;
+    }
+
+    /* Value cells */
+    .val-cell { text-align: center; }
+    .val-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      display: block;
+      line-height: 1.1;
+    }
+    .val-num.pos-heat  { color: #CF912E; }  /* warming / hot days / drought = amber warning */
+    .val-num.pos-rain  { color: #27ADBA; }  /* more rainfall = teal (can be hazard too, context shown) */
+    .val-num.neg-rain  { color: #CF912E; }  /* less rainfall (drought) = amber */
+    .val-num.neg-other { color: #536E82; }  /* minor decrease, neutral */
+    .val-num.neutral   { color: #E2EBF5; }
+
+    .val-agree {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.06em;
+      color: #3D576B;
+      display: block;
+      margin-top: 0.25rem;
+    }
+    .val-agree.full { color: #536E82; }
+
+    /* Divider row */
+    .divider-row td {
+      padding: 0.2rem 0 !important;
+      border: none !important;
+    }
+    .divider-line {
+      height: 1px;
+      background: #1C3448;
+    }
+
+    /* ─── Footer note ─── */
+    .fnote {
+      font-size: 0.6875rem;
+      color: #3D576B;
+      line-height: 1.65;
+      border-top: 1px solid #1C3448;
+      padding-top: 0.75rem;
+    }
+    .fnote strong { color: #536E82; font-weight: 500; }
+    .fnote a { color: #27ADBA; text-decoration: none; }
+
+    @media (max-width: 540px) {
+      body { padding: 1.25rem 1rem; }
+      .cmp-table { font-size: 0.75rem; }
+      .val-num { font-size: 0.8125rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="hdr">
+    <div>
+      <p class="hdr-title">CORDEX Regional Climate Projections</p>
+      <p class="hdr-sub">Late-century change relative to the 1991–2020 baseline, across the three proof-of-concept displacement regions. Each cell shows the multi-model ensemble direction and run agreement count.</p>
+    </div>
+    <div class="badge-row">
+      <span class="badge badge-amber">RCP 8.5</span>
+      <span class="badge badge-teal">2071 – 2099</span>
+    </div>
+  </div>
+
+  <!-- Scenario legend -->
+  <div class="scenario-row">
+    <span class="scenario-pill">
+      <span class="dot dot-rcp85"></span>
+      RCP 8.5 shown &middot; high-emission scenario
+    </span>
+    <span class="scenario-pill">
+      <span class="dot dot-rcp26"></span>
+      RCP 2.6 (low-emission) results follow the same directional pattern at reduced magnitude
+    </span>
+  </div>
+
+  <!-- Comparison table -->
+  <div style="overflow-x: auto;">
+    <table class="cmp-table" aria-label="CORDEX late-century climate projections by region and metric">
+      <thead>
+        <tr>
+          <th><span class="col-lbl">Metric</span></th>
+          <th>
+            <div class="region-hdr">
+              <span class="region-name">Philippines</span>
+              <span class="region-hazard">Storm · Flood</span>
+            </div>
+          </th>
+          <th>
+            <div class="region-hdr">
+              <span class="region-name">Afghanistan</span>
+              <span class="region-hazard">Drought</span>
+            </div>
+          </th>
+          <th>
+            <div class="region-hdr">
+              <span class="region-name">Bangladesh</span>
+              <span class="region-hazard">Flood · Cyclone</span>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Warming -->
+        <tr>
+          <td>
+            <span class="metric-name">Mean warming</span>
+            <span class="metric-unit">°C above baseline</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-heat">+2.9</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-heat">+4.9</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-heat">+3.8</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+        </tr>
+
+        <!-- Hot days -->
+        <tr>
+          <td>
+            <span class="metric-name">Hot days per year</span>
+            <span class="metric-unit">additional days &gt;35°C</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-heat">+247</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-heat">+66</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-heat">+95</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr class="divider-row"><td colspan="4"><div class="divider-line"></div></td></tr>
+
+        <!-- Annual rainfall -->
+        <tr>
+          <td>
+            <span class="metric-name">Annual rainfall</span>
+            <span class="metric-unit">% change</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-rain">+9%</span>
+            <span class="val-agree">4 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num neg-rain">−21%</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-rain">+4%</span>
+            <span class="val-agree">3 / 6 runs</span>
+          </td>
+        </tr>
+
+        <!-- Drought months -->
+        <tr>
+          <td>
+            <span class="metric-name">Drought months</span>
+            <span class="metric-unit">additional months per year (SPI)</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num neutral">+1 pt</span>
+            <span class="val-agree">3 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-heat">+19 pts</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num neutral">+3 pts</span>
+            <span class="val-agree">3 / 6 runs</span>
+          </td>
+        </tr>
+
+        <!-- Heaviest 5-day rainfall -->
+        <tr>
+          <td>
+            <span class="metric-name">Heaviest 5-day rainfall</span>
+            <span class="metric-unit">% change in Rx5day</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-rain">+20%</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num neg-other">−6%</span>
+            <span class="val-agree full">5 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-rain">+24%</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+        </tr>
+
+        <!-- Rain on very wet days -->
+        <tr>
+          <td>
+            <span class="metric-name">Very wet day rainfall</span>
+            <span class="metric-unit">% change in R95p</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-rain">+41%</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num neg-other">−1%</span>
+            <span class="val-agree">3 / 6 runs</span>
+          </td>
+          <td class="val-cell">
+            <span class="val-num pos-rain">+25%</span>
+            <span class="val-agree full">6 / 6 runs</span>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer note -->
+  <p class="fnote">
+    <strong>Source:</strong> CORDEX 12 regional model runs (6 per scenario). RCP 8.5 results shown; RCP 2.6 runs project the same directional signals at reduced magnitude. Baseline period: 1991–2020. <strong>Color guide:</strong> amber values indicate warming or drying increases; teal values indicate additional rainfall. The Philippine and Bangladeshi rainfall increases intensify existing flood and cyclone hazards; Afghanistan's 21% rainfall reduction and 19-point drought increase represent a structurally distinct aridification trajectory. The Afghanistan drought index increase by 2071–2099 is the single largest projected change across all three regions in absolute vulnerability-relevant terms.
+  </p>
+
+</body>
+</html>
