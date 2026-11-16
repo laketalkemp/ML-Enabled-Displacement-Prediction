@@ -211,8 +211,8 @@ def fig_global_clusters():
         if len(s):
             s.plot(ax=ax, color=col, edgecolor="white", linewidth=0.2)
     fit_world(ax, m)
-    hh = Patch(color=cls["high-high"], label="High hazard burden, high-vulnerability neighbours")
-    ll = Patch(color=cls["low-low"], label="Low burden, low-vulnerability neighbours")
+    hh = Patch(color=cls["high-high"], label="High hazard burden, high-vulnerability neighbors")
+    ll = Patch(color=cls["low-low"], label="Low burden, low-vulnerability neighbors")
     ot = Patch(color=cls["high-low"], label="Mixed (outliers)")
     fig.legend(handles=[hh, ll, ot], loc="lower center", ncol=1, frameon=False, fontsize=9.5, bbox_to_anchor=(0.5, -0.01))
     save(fig, "s_global_bivariate_clusters.png")
