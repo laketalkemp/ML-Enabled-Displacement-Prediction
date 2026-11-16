@@ -62,3 +62,15 @@ def test_to_key():
     assert idmc.tolist() == ["KOS", "AB9", "NOR", "FRA", "SOM"]
     wdi = X.to_key(pd.Series(["WLD", "CHI", "XKX", "FRA"]), "wdi")
     assert pd.isna(wdi.iloc[0]) and pd.isna(wdi.iloc[1]) and wdi.iloc[2:].tolist() == ["KOS", "FRA"]
+
+
+def test_map_units_abyei_and_somaliland():
+    from hvd import viz
+    gj, units = viz.world_geojson()
+    ids = [f["id"] for f in gj["features"]]
+    assert "AB9" in ids and len(ids) == len(set(ids))
+    from shapely.geometry import shape
+    geo = {f["id"]: shape(f["geometry"]) for f in gj["features"]}
+    # Abyei is not drawn as Sudan (a sliver remains where the two shapes are simplified separately)
+    assert geo["SDN"].intersection(geo["AB9"]).area < 0.05 * geo["AB9"].area
+    assert "B38" not in set(viz.disputed_areas().BRK_A3)
