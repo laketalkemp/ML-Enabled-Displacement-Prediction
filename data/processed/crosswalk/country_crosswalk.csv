@@ -1,4 +1,5 @@
 iso3,display_name,status,axis_label,in_inform,in_imf,in_emdat,in_idmc,in_wdi,data_parent,has_geometry,ne_units,ne_name,ne_type,ne_sovereign,key_from_adm0_a3,index_name,emdat_name,idmc_name,wdi_name,name_changed_from_index,name_needs_review,note
+AB9,Abyei Area,"Other place, not a UN member state",AB9,False,False,False,True,False,,True,B13 (disputed-areas layer),,,,False,,,Abyei Area,,False,False,"Special administrative status between Sudan and South Sudan; final status not yet determined. Drawn on its own (Natural Earth's disputed-areas layer, carved out of Sudan) and hatched, attributed to neither country (LaKeta, Nov 16). No INFORM score; IDMC records displacement here, outside the country analyses."
 ABW,Aruba,Territory,ABW,False,False,False,False,True,,True,ABW,Aruba,Country,Netherlands,False,,,,Aruba,False,False,
 AFG,Afghanistan,UN member state,AFG,True,True,True,True,True,,True,AFG,Afghanistan,Sovereign country,Afghanistan,False,Afghanistan,Afghanistan,Afghanistan,Afghanistan,False,False,
 AGO,Angola,UN member state,AGO,True,True,True,True,True,,True,AGO,Angola,Sovereign country,Angola,False,Angola,Angola,Angola,Angola,False,False,
@@ -52,7 +53,7 @@ CRI,Costa Rica,UN member state,CRI,True,True,True,True,True,,True,CRI,Costa Rica
 CUB,Cuba,UN member state,CUB,True,False,True,True,True,,True,CUB,Cuba,Sovereignty,Cuba,False,Cuba,Cuba,Cuba,Cuba,False,False,
 CUW,Curaçao,Territory,CUW,False,False,False,False,True,,True,CUW,Curaçao,Country,Netherlands,False,,,,Curacao,False,False,
 CYM,Cayman Islands,Territory,CYM,False,False,True,True,True,,True,CYM,Cayman Islands,Dependency,United Kingdom,False,,Cayman Islands,Cayman Islands,Cayman Islands,False,False,
-CYN,Northern Cyprus (Cyprus),"Other place, not a UN member state",CYN,False,False,False,False,False,,True,CYN,Northern Cyprus,Sovereign country,Northern Cyprus,True,,,,,False,True,Drawn separately by Natural Earth (de facto); no source scores it. Hatched as disputed.
+CYN,Northern Cyprus (Cyprus),"Other place, not a UN member state",CYN,False,False,False,False,False,,True,CYN,Northern Cyprus,Sovereign country,Northern Cyprus,True,,,,,False,False,Drawn separately by Natural Earth (de facto); no source scores it. Hatched as disputed.
 CYP,Cyprus,UN member state,CYP,True,True,True,True,True,,True,CYP,Cyprus,Sovereign country,Cyprus,False,Cyprus,Cyprus,Cyprus,Cyprus,False,False,
 CZE,Czechia,UN member state,CZE,True,True,True,True,True,,True,CZE,Czech Republic,Sovereign country,Czechia,False,Czechia,Czechia,Czech Republic,Czechia,False,False,
 DEU,Germany,UN member state,DEU,True,True,True,True,True,,True,DEU,Germany,Sovereign country,Germany,False,Germany,Germany,Germany,Germany,False,False,
@@ -194,7 +195,7 @@ SLB,Solomon Islands,UN member state,SLB,True,True,True,True,True,,True,SLB,Solom
 SLE,Sierra Leone,UN member state,SLE,True,True,True,True,True,,True,SLE,Sierra Leone,Sovereign country,Sierra Leone,False,Sierra Leone,Sierra Leone,Sierra Leone,Sierra Leone,False,False,
 SLV,El Salvador,UN member state,SLV,True,True,True,True,True,,True,SLV,El Salvador,Sovereign country,El Salvador,False,El Salvador,El Salvador,El Salvador,El Salvador,False,False,
 SMR,San Marino,UN member state,SMR,False,False,False,False,True,,True,SMR,San Marino,Sovereign country,San Marino,False,,,,San Marino,False,False,
-SOL,Somaliland (Somalia),"Other place, not a UN member state",SOL,False,False,False,False,False,SOM,True,SOL,Somaliland,Sovereign country,Somaliland,True,,,,,False,True,"Drawn separately by Natural Earth (de facto); INFORM, EM-DAT and IDMC count it within Somalia, so the map shades it with Somalia's score and hatches it as disputed."
+SOL,Somaliland (Somalia),"Other place, not a UN member state",SOL,False,False,False,False,False,SOM,True,SOL,Somaliland,Sovereign country,Somaliland,True,,,,,False,False,"Drawn separately by Natural Earth (de facto); INFORM, EM-DAT and IDMC count it within Somalia, so the map shades it with Somalia's score and hatches it as disputed."
 SOM,Somalia,UN member state,SOM,True,True,True,True,True,,True,SOM,Somalia,Sovereign country,Somalia,False,Somalia,Somalia,Somalia,"Somalia, Fed. Rep.",False,False,
 SPM,Saint Pierre and Miquelon,Territory,SPM,False,False,False,False,False,,True,SPM,Saint Pierre and Miquelon,Dependency,France,False,,,,,False,False,
 SRB,Serbia,UN member state,SRB,True,True,True,True,True,,True,SRB,Serbia,Sovereign country,Republic of Serbia,False,Serbia,Serbia,Serbia,Serbia,False,False,Takes EM-DAT's 'Serbia Montenegro' records (2000-2006) except one that names only Montenegro. EM-DAT places some later records in Kosovo under Serbia; they stay with Serbia.
@@ -237,7 +238,7 @@ VNM,Viet Nam,UN member state,VNM,True,True,True,True,True,,True,VNM,Vietnam,Sove
 VUT,Vanuatu,UN member state,VUT,True,True,True,True,True,,True,VUT,Vanuatu,Sovereign country,Vanuatu,False,Vanuatu,Vanuatu,Vanuatu,Vanuatu,False,False,
 WLF,Wallis and Futuna Islands,Territory,WLF,False,False,True,False,False,,True,WLF,Wallis and Futuna Islands,Dependency,France,False,,Wallis and Futuna Islands,,,False,False,
 WSM,Samoa,UN member state,WSM,True,True,True,True,True,,True,WSM,Samoa,Sovereign country,Samoa,False,Samoa,Samoa,Samoa,Samoa,False,False,
-YEM,Yemen,UN member state,YEM,True,True,True,True,True,,True,YEM,Yemen,Sovereign country,Yemen,False,"Yemen, Rep.",Yemen,Yemen,"Yemen, Rep.",True,False,
+YEM,Republic of Yemen,UN member state,YEM,True,True,True,True,True,,True,YEM,Yemen,Sovereign country,Yemen,False,"Yemen, Rep.",Yemen,Yemen,"Yemen, Rep.",True,False,
 ZAF,South Africa,UN member state,ZAF,True,True,True,True,True,,True,ZAF,South Africa,Sovereign country,South Africa,False,South Africa,South Africa,South Africa,South Africa,False,False,
 ZMB,Zambia,UN member state,ZMB,True,True,True,True,True,,True,ZMB,Zambia,Sovereign country,Zambia,False,Zambia,Zambia,Zambia,Zambia,False,False,
 ZWE,Zimbabwe,UN member state,ZWE,True,True,True,True,True,,True,ZWE,Zimbabwe,Sovereign country,Zimbabwe,False,Zimbabwe,Zimbabwe,Zimbabwe,Zimbabwe,False,False,

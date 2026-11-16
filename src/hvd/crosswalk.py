@@ -41,7 +41,7 @@ UKR ARE GBR TZA USA URY UZB VUT VEN VNM YEM ZMB ZWE""".split())
 UN_OBSERVERS = frozenset({"PSE", "VAT"})
 
 # Preferred names where they differ from the World Bank style names the INFORM extracts carry (terminology.md, Nov 11-12;
-# Yemen added Nov 16). Every other UN member keeps the INFORM name, which already matches its UN short name.
+# Yemen added Nov 16 as "Republic of Yemen", the natural order of "Yemen, Rep."). Every other UN member keeps the INFORM name, which already matches its UN short name.
 PREFERRED = {
     "BHS": "The Bahamas", "BOL": "Plurinational State of Bolivia", "COD": "Democratic Republic of the Congo",
     "COG": "Republic of the Congo", "EGY": "Egypt", "FSM": "Federated States of Micronesia",
@@ -51,17 +51,17 @@ PREFERRED = {
     "NLD": "Kingdom of the Netherlands", "PRK": "Democratic People's Republic of Korea", "PSE": "State of Palestine",
     "SVK": "Slovakia", "TZA": "United Republic of Tanzania", "USA": "United States of America",
     "VCT": "Saint Vincent and the Grenadines", "VEN": "Bolivarian Republic of Venezuela", "VNM": "Viet Nam",
-    "YEM": "Yemen",
+    "YEM": "Republic of Yemen",
     # UN members and observers that INFORM does not score
     "AND": "Andorra", "MCO": "Monaco", "SMR": "San Marino", "VAT": "Holy See",
 }
 
 # Places that are not UN member states: UN statistical names (Nov 16). Somaliland and Northern Cyprus have no UN
-# statistical name; the parenthesis names the UN member state the UN counts them in (marked * in the report).
+# statistical name; LaKeta confirmed "Somaliland (Somalia)" and "Northern Cyprus (Cyprus)" on Nov 16.
 OTHER_NAMES = {
     "TWN": "Taiwan Province of China", "HKG": "Hong Kong SAR (China)", "MAC": "Macao SAR (China)",
     "KOS": "Kosovo (UNSCR 1244)", "ESH": "Western Sahara", "SOL": "Somaliland (Somalia)",
-    "CYN": "Northern Cyprus (Cyprus)", "KAS": "Siachen Glacier", "ATA": "Antarctica",
+    "CYN": "Northern Cyprus (Cyprus)", "KAS": "Siachen Glacier", "ATA": "Antarctica", "AB9": "Abyei Area",
     "ABW": "Aruba", "AIA": "Anguilla", "ALA": "Åland Islands", "ASM": "American Samoa",
     "ATF": "French Southern Territories", "BLM": "Saint Barthélemy", "BMU": "Bermuda", "COK": "Cook Islands",
     "CUW": "Curaçao", "CYM": "Cayman Islands", "FLK": "Falkland Islands (Malvinas)", "FRO": "Faroe Islands",
@@ -75,7 +75,11 @@ OTHER_NAMES = {
     # in a source but not drawn at Natural Earth's 1:50m scale
     "TKL": "Tokelau", "GIB": "Gibraltar",
 }
-DERIVED_NAMES = {"SOL", "CYN"}      # no UN statistical name; flagged for review
+DERIVED_NAMES: set = set()          # names with no UN source still to confirm (Somaliland, Northern Cyprus confirmed Nov 16)
+
+# Places drawn from Natural Earth's disputed-areas layer rather than admin-0: key -> BRK_A3 in that layer.
+# Abyei is carved out of Sudan on the map and attributed to neither Sudan nor South Sudan (LaKeta, Nov 16).
+DISPUTED_LAYER_UNITS = {"AB9": "B13"}
 
 # Map shading: the key whose data cover this unit. Somaliland is counted within Somalia by INFORM, EM-DAT and IDMC.
 DATA_PARENT = {"SOL": "SOM"}
@@ -86,6 +90,9 @@ NOTES = {
            "shades it with Somalia's score and hatches it as disputed.",
     "CYN": "Drawn separately by Natural Earth (de facto); no source scores it. Hatched as disputed.",
     "KAS": "Indeterminate in Natural Earth; no source scores it. Hatched as disputed.",
+    "AB9": "Special administrative status between Sudan and South Sudan; final status not yet determined. Drawn on its "
+           "own (Natural Earth's disputed-areas layer, carved out of Sudan) and hatched, attributed to neither country "
+           "(LaKeta, Nov 16). No INFORM score; IDMC records displacement here, outside the country analyses.",
     "ESH": "Non-self-governing territory (UN); no INFORM score. Partly administered by Morocco; hatched as disputed.",
     "PSE": "UN non-member observer state; scored by INFORM. Also covered by the disputed-area policy.",
     "VAT": "UN non-member observer state; not scored by INFORM.",
@@ -122,8 +129,6 @@ ALIASES = [
     ("idmc", "REU", "FRA", "region_of", "Overseas department of France."),
     ("idmc", "SJM", "NOR", "region_of", "Svalbard and Jan Mayen are part of Norway."),
     ("idmc", "XKX", "KOS", "same_place", "IDMC's code for Kosovo."),
-    ("idmc", "AB9", "", "exclude", "Abyei Area: special administrative status, claimed by Sudan and South Sudan. Kept "
-                                   "out of country analyses rather than assigned to either."),
     # World Bank (WDI)
     ("wdi", "XKX", "KOS", "same_place", "The World Bank's code for Kosovo."),
     ("wdi", "CHI", "", "exclude", "Channel Islands: Jersey and Guernsey combined; each has its own key."),

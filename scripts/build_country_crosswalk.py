@@ -112,7 +112,7 @@ def status(k):
         return "UN observer state"
     if k == "ATA":
         return "Antarctica"
-    if k in {"KOS", "TWN", "SOL", "CYN", "ESH", "KAS"}:
+    if k in {"KOS", "TWN", "SOL", "CYN", "ESH", "KAS", "AB9"}:
         return "Other place, not a UN member state"
     return "Territory"
 
@@ -137,6 +137,8 @@ for s in ["emdat", "idmc", "wdi"]:
     mapped = set(aliases[(aliases.source == s) & aliases.key.ne("")].key.str.split("|").explode())
     cw[f"in_{s}"] = cw.index.isin(mapped)
     cw[f"{s}_name"] = name_in(s).reindex(cw.index)
+for k, brk in X.DISPUTED_LAYER_UNITS.items():
+    cw.loc[k, "ne_units"] = f"{brk} (disputed-areas layer)"
 cw["has_geometry"] = cw.ne_units.notna()
 cw["key_from_adm0_a3"] = cw.key_from_adm0_a3.fillna(False).astype(bool)
 cw["note"] = pd.Series(X.NOTES).reindex(cw.index)
@@ -199,6 +201,8 @@ source uses). The build fails if a source code has no decision.
   them, so they are outside the country analyses and appear on the map as having no score.
 - **Serbia and Montenegro.** EM-DAT's 12 records for 2000–2006 go to Montenegro when a record names only Montenegro
   (1 record) and to Serbia, the continuing state, otherwise (11). Decided Nov 16.
+- **Abyei Area** is drawn on its own and hatched, attributed to neither Sudan nor South Sudan (Nov 16). IDMC
+  records displacement there; it has no INFORM score, so it stays outside the country analyses.
 - **Somaliland** is shaded with Somalia's score on the map, because INFORM, EM-DAT, and IDMC count it within Somalia,
   and is hatched as disputed (Nov 16). Northern Cyprus, Kosovo, Western Sahara, and Siachen Glacier stay unshaded,
   because no source scores them.
@@ -212,12 +216,13 @@ source uses). The build fails if a source code has no decision.
 ## Display names that change from the index
 
 The index carries World Bank style names. These change on display; every other UN member keeps its name.
-Yemen was added on Nov 16 (the Nov 11 list missed it).
+Yemen was added on Nov 16 as "Republic of Yemen" (the Nov 11 list missed it).
 
 {md(changed)}
 ## Places that are not UN member states, and observers
 
-\\* No UN statistical name exists; the parenthesis names the UN member state the UN counts the place in. To review.
+Somaliland and Northern Cyprus have no UN statistical name; LaKeta confirmed their names on Nov 16. The Abyei Area is
+drawn on its own and hatched, attributed to neither Sudan nor South Sudan (Nov 16).
 
 {md(other)}
 ## Source codes that are not keys

@@ -36,7 +36,8 @@ def test_display_names(cw):
     assert cw.display_name.notna().all() and cw.display_name.is_unique
     assert cw.at["IRN", "display_name"] == "Islamic Republic of Iran"
     assert cw.at["PSE", "display_name"] == "State of Palestine"
-    assert cw.at["YEM", "display_name"] == "Yemen"
+    assert cw.at["YEM", "display_name"] == "Republic of Yemen"
+    assert cw.at["AB9", "display_name"] == "Abyei Area" and cw.at["AB9", "has_geometry"]
     assert cw.at["TWN", "display_name"] == "Taiwan Province of China"
     assert cw.at["KOS", "display_name"] == "Kosovo (UNSCR 1244)"
     assert cw.at["AFG", "display_name"] == "Afghanistan"
@@ -58,6 +59,6 @@ def test_to_key():
                                       "Andrijevica, Berane, Grad Beograd provinces (Serbia & Montenegro)"]))
     assert em.tolist() == ["PHL", "PRT", "ESP", "FRA", "MNE", "SRB", "SRB"]
     idmc = X.to_key(pd.Series(["XKX", "AB9", "SJM", "GUF", "SOM"]), "idmc")
-    assert idmc.iloc[0] == "KOS" and pd.isna(idmc.iloc[1]) and idmc.iloc[2:].tolist() == ["NOR", "FRA", "SOM"]
+    assert idmc.tolist() == ["KOS", "AB9", "NOR", "FRA", "SOM"]
     wdi = X.to_key(pd.Series(["WLD", "CHI", "XKX", "FRA"]), "wdi")
     assert pd.isna(wdi.iloc[0]) and pd.isna(wdi.iloc[1]) and wdi.iloc[2:].tolist() == ["KOS", "FRA"]

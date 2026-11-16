@@ -19,20 +19,22 @@ source uses). The build fails if a source code has no decision.
   them, so they are outside the country analyses and appear on the map as having no score.
 - **Serbia and Montenegro.** EM-DAT's 12 records for 2000–2006 go to Montenegro when a record names only Montenegro
   (1 record) and to Serbia, the continuing state, otherwise (11). Decided Nov 16.
+- **Abyei Area** is drawn on its own and hatched, attributed to neither Sudan nor South Sudan (Nov 16). IDMC
+  records displacement there; it has no INFORM score, so it stays outside the country analyses.
 - **Somaliland** is shaded with Somalia's score on the map, because INFORM, EM-DAT, and IDMC count it within Somalia,
   and is hatched as disputed (Nov 16). Northern Cyprus, Kosovo, Western Sahara, and Siachen Glacier stay unshaded,
   because no source scores them.
 
 ## Coverage
 
-- 242 keys: 193 UN member states, 2 UN observer states, 40 territories, 6 other places that are not UN member states, and Antarctica.
+- 243 keys: 193 UN member states, 2 UN observer states, 40 territories, 7 other places that are not UN member states, and Antarctica.
 - The index scores 191 of them: 190 UN member states (all but Andorra, Monaco, and San Marino) and the State of Palestine. The IMF indicators cover 188.
 - EM-DAT (2000–2025) uses 220 country codes, IDMC 214, and the WDI export 266, including 49 regional and income-group aggregates, which are excluded.
 
 ## Display names that change from the index
 
 The index carries World Bank style names. These change on display; every other UN member keeps its name.
-Yemen was added on Nov 16 (the Nov 11 list missed it).
+Yemen was added on Nov 16 as "Republic of Yemen" (the Nov 11 list missed it).
 
 | Key | Name in the index (World Bank style) | Display name |
 |---|---|---|
@@ -60,20 +62,22 @@ Yemen was added on Nov 16 (the Nov 11 list missed it).
 | VCT | St. Vincent and the Grenadines | Saint Vincent and the Grenadines |
 | VEN | Venezuela, RB | Bolivarian Republic of Venezuela |
 | VNM | Vietnam | Viet Nam |
-| YEM | Yemen, Rep. | Yemen |
+| YEM | Yemen, Rep. | Republic of Yemen |
 
 ## Places that are not UN member states, and observers
 
-\* No UN statistical name exists; the parenthesis names the UN member state the UN counts the place in. To review.
+Somaliland and Northern Cyprus have no UN statistical name; LaKeta confirmed their names on Nov 16. The Abyei Area is
+drawn on its own and hatched, attributed to neither Sudan nor South Sudan (Nov 16).
 
 | Key | Display name | Status | INFORM score | Map shading from | Note |
 |---|---|---|---|---|---|
-| CYN | Northern Cyprus (Cyprus) * | Other place, not a UN member state |  |  | Drawn separately by Natural Earth (de facto); no source scores it. Hatched as disputed. |
+| AB9 | Abyei Area | Other place, not a UN member state |  |  | Special administrative status between Sudan and South Sudan; final status not yet determined. Drawn on its own (Natural Earth's disputed-areas layer, carved out of Sudan) and hatched, attributed to neither country (LaKeta, Nov 16). No INFORM score; IDMC records displacement here, outside the country analyses. |
+| CYN | Northern Cyprus (Cyprus) | Other place, not a UN member state |  |  | Drawn separately by Natural Earth (de facto); no source scores it. Hatched as disputed. |
 | ESH | Western Sahara | Other place, not a UN member state |  |  | Non-self-governing territory (UN); no INFORM score. Partly administered by Morocco; hatched as disputed. |
 | KAS | Siachen Glacier | Other place, not a UN member state |  |  | Indeterminate in Natural Earth; no source scores it. Hatched as disputed. |
 | KOS | Kosovo (UNSCR 1244) | Other place, not a UN member state |  |  | UN usage: references to Kosovo are in the context of Security Council resolution 1244 (1999). No INFORM score. |
 | PSE | State of Palestine | UN observer state | yes |  | UN non-member observer state; scored by INFORM. Also covered by the disputed-area policy. |
-| SOL | Somaliland (Somalia) * | Other place, not a UN member state |  | SOM | Drawn separately by Natural Earth (de facto); INFORM, EM-DAT and IDMC count it within Somalia, so the map shades it with Somalia's score and hatches it as disputed. |
+| SOL | Somaliland (Somalia) | Other place, not a UN member state |  | SOM | Drawn separately by Natural Earth (de facto); INFORM, EM-DAT and IDMC count it within Somalia, so the map shades it with Somalia's score and hatches it as disputed. |
 | TWN | Taiwan Province of China | Other place, not a UN member state |  |  | Not a UN member state; no INFORM score. EM-DAT and IDMC report it separately. |
 | VAT | Holy See | UN observer state |  |  | UN non-member observer state; not scored by INFORM. |
 
@@ -89,7 +93,6 @@ Yemen was added on Nov 16 (the Nov 11 list missed it).
 | EM-DAT | REU | Réunion | FRA | Part of the country | Overseas department of France. |
 | EM-DAT | SCG | Serbia Montenegro | SRB|MNE | Split by location | Serbia and Montenegro (2000-2006): Montenegro when the record names only Montenegro, otherwise Serbia, the continuing state. |
 | EM-DAT | SPI | Canary Islands | ESP | Part of the country | The Canary Islands are an autonomous community of Spain. |
-| IDMC | AB9 | Abyei Area |  | Excluded | Abyei Area: special administrative status, claimed by Sudan and South Sudan. Kept out of country analyses rather than assigned to either. |
 | IDMC | GLP | Guadeloupe | FRA | Part of the country | Overseas department of France. |
 | IDMC | GUF | French Guiana | FRA | Part of the country | Overseas department of France. |
 | IDMC | MTQ | Martinique | FRA | Part of the country | Overseas department of France. |

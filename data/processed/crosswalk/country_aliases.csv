@@ -219,7 +219,7 @@ emdat,YEM,Yemen,YEM,key,
 emdat,ZAF,South Africa,ZAF,key,
 emdat,ZMB,Zambia,ZMB,key,
 emdat,ZWE,Zimbabwe,ZWE,key,
-idmc,AB9,Abyei Area,,exclude,"Abyei Area: special administrative status, claimed by Sudan and South Sudan. Kept out of country analyses rather than assigned to either."
+idmc,AB9,Abyei Area,AB9,key,
 idmc,AFG,Afghanistan,AFG,key,
 idmc,AGO,Angola,AGO,key,
 idmc,AIA,Anguilla,AIA,key,
