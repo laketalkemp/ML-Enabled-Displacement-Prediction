@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased (v1.3)
+
+**Country crosswalk** (`src/hvd/crosswalk.py`, `scripts/build_country_crosswalk.py`, `tests/test_crosswalk.py`)
+- One key per place: Natural Earth's `ISO_A3_EH`, or `ADM0_A3` where it is −99 (Somaliland, Kosovo, Northern Cyprus, Siachen Glacier). 242 keys.
+- Display names: UN short names in natural word order for UN members and observers; UN statistical names for other places (for example Taiwan Province of China, Hong Kong SAR (China), Kosovo (UNSCR 1244)).
+- Every country code in EM-DAT, IDMC and the WDI export has a logged decision (`data/processed/crosswalk/country_aliases.csv`, `reports/country_crosswalk.md`); the build fails on a code without one.
+- EM-DAT and IDMC: the Canary Islands, the Azores, France's overseas departments and Svalbard now count with their country; EM-DAT's "Serbia Montenegro" (2000–2006) goes to Montenegro when a record names only Montenegro, otherwise to Serbia; IDMC's Abyei Area is excluded; XKX is Kosovo.
+- Somaliland is marked to take Somalia's score on the map (`data_parent`).
+
+**Effect on the statistics (rerun Nov 16)**
+- Median weather displacement at the Low vulnerability level: 19 → 21 per 100,000 a year (France's overseas departments now count with France), so the Severe-to-Low ratio is 16×, not 17×. The Severe median (336) and the per-10-point estimates (×1.34; +28% given any displacement) are unchanged.
+- Moran's I for people affected per head: 0.406 → 0.404 (reported as 0.40, not 0.41). Bivariate I (0.36), the 28 high-high countries and their 16-country overlap with the Severe level are unchanged.
+- Hazard archetypes: 173 countries, not 176 (separately listed regions merged): 60 flood-led, 61 storm-led and 52 mixed; Cramér's V with the vulnerability levels 0.47 (was 0.48); bootstrap stability 0.71 (was 0.69).
+- Trends, deaths per fatal event (+48% storms, +29% floods, +36% all climate hazards) and the medians by vulnerability level are unchanged. The extreme-temperature trend (+16%) now needs a restart of the negative binomial fit, because its dispersion sits at zero (`stats/country.py`); q = 0.03 (was 0.02). Co-occurrence of extreme temperature and wildfire: 1.23× (was 1.24×).
+
 ## v1.2.0 (November 2026)
 
 **Statistics** (`src/hvd/stats/`, `scripts/stats_*.py`, `tests/test_stats.py`)

@@ -12,7 +12,7 @@ import pandas as pd
 import statsmodels.formula.api as smf
 from scipy import stats
 
-from .. import paths
+from .. import crosswalk, paths
 
 
 def _find(cols, *patterns):
@@ -46,7 +46,9 @@ def _disaggregated(files) -> pd.DataFrame | None:
         d = d.drop_duplicates("ID")
     d = d[(d["Figure cause"].astype(str).str.lower() == "disaster") &
           (d["Figure category"].astype(str).str.lower().str.startswith("internal displacement"))]
-    out = pd.DataFrame({"figure_id": d.get("ID"), "iso3": d["ISO3"], "year": pd.to_numeric(d["Year"], errors="coerce"),
+    # crosswalk key: overseas departments and Svalbard count with their country; XKX is Kosovo; Abyei is excluded
+    out = pd.DataFrame({"figure_id": d.get("ID"), "iso3": crosswalk.to_key(d["ISO3"], "idmc"), "iso3_source": d["ISO3"],
+                        "year": pd.to_numeric(d["Year"], errors="coerce"),
                         "displacements": pd.to_numeric(d["Total figures"], errors="coerce"),
                         "hazard_category": d.get("Hazard category"), "hazard_type": d.get("Hazard type"),
                         "hazard_sub_type": d.get("Hazard sub type"), "event_id": d.get("Event ID"), "event": d.get("Event name"),
@@ -86,7 +88,7 @@ def load_disaster_events() -> pd.DataFrame | None:
             ht = _find(cols, r"hazard type", r"hazard_type")
             ev = _find(cols, r"event name", r"event")
             if iso and yr and disp and (hz or ht) and ev:
-                out = pd.DataFrame({"iso3": d[iso], "year": pd.to_numeric(d[yr], errors="coerce"),
+                out = pd.DataFrame({"iso3": crosswalk.to_key(d[iso], "idmc"), "year": pd.to_numeric(d[yr], errors="coerce"),
                                     "displacements": pd.to_numeric(d[disp], errors="coerce"),
                                     "hazard_category": d[hz] if hz else np.nan, "hazard_type": d[ht] if ht else np.nan,
                                     "event": d[ev]})

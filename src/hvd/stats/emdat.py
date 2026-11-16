@@ -9,7 +9,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from .. import paths
+from .. import crosswalk, paths
 
 # Hazard groups used throughout. Climate hazards form the core; geophysical ones are sensitivity columns.
 HGROUP = {
@@ -43,7 +43,10 @@ def load_records(y0: int = 2000, y1: int = 2025) -> pd.DataFrame:
     d = raw[(raw["Disaster Group"] == "Natural") & raw["Disaster Type"].isin(HGROUP)
             & raw["Start Year"].between(y0, y1)].copy()
     out = pd.DataFrame({
-        "disno": d["DisNo."], "event_id": d["DisNo."].str[:9], "iso3": d["ISO"], "country": d["Country"],
+        "disno": d["DisNo."], "event_id": d["DisNo."].str[:9],
+        # crosswalk key: parts of a country listed separately count with it; "Serbia Montenegro" is split by location
+        "iso3": crosswalk.to_key(d["ISO"], "emdat", location=d["Location"]), "iso3_source": d["ISO"],
+        "country": d["Country"],
         "region": d["Region"], "subregion": d["Subregion"],
         "type": d["Disaster Type"], "subtype": d["Disaster Subtype"], "hgroup": d["Disaster Type"].map(HGROUP),
         "year": d["Start Year"].astype(int), "month": d["Start Month"],
@@ -69,7 +72,9 @@ def wdi_series(code: str) -> pd.DataFrame | None:
     d = paths.RAW / "wdi"
     api = sorted(glob.glob(str(d / f"API_{code}*.csv")))
     if api:
-        w = pd.read_csv(api[-1], skiprows=4).set_index("Country Code")
+        w = pd.read_csv(api[-1], skiprows=4)
+        w = w.assign(**{"Country Code": crosswalk.to_key(w["Country Code"], "wdi")}).dropna(subset=["Country Code"])
+        w = w.set_index("Country Code")
         yrs = [c for c in w.columns if str(c).isdigit()]
         w = w[yrs]
         w.columns = w.columns.astype(int)
@@ -78,7 +83,9 @@ def wdi_series(code: str) -> pd.DataFrame | None:
         w = pd.read_csv(f, na_values=[".."])
         if "Series Code" not in w.columns or code not in set(w["Series Code"].dropna()):
             continue
-        w = w[w["Series Code"] == code].set_index("Country Code")
+        w = w[w["Series Code"] == code]
+        w = w.assign(**{"Country Code": crosswalk.to_key(w["Country Code"], "wdi")}).dropna(subset=["Country Code"])
+        w = w.set_index("Country Code")
         yrs = {c: int(c[:4]) for c in w.columns if re.match(r"^\d{4} \[YR\d{4}\]$", str(c))}
         w = w[list(yrs)].rename(columns=yrs)
         return w.apply(pd.to_numeric, errors="coerce")

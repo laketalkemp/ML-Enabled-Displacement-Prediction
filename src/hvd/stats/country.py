@@ -73,7 +73,18 @@ def trends(rec: pd.DataFrame, groups=None) -> pd.DataFrame:
             try:
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")
-                    m = smf.negativebinomial("n ~ decade + C(iso3)", panel).fit(disp=0, maxiter=300, method="bfgs")
+                    nb = smf.negativebinomial("n ~ decade + C(iso3)", panel)
+                    m = nb.fit(disp=0, maxiter=300, method="bfgs")
+                    if not np.isfinite(m.bse["decade"]):
+                        # alpha at its boundary (no overdispersion) can leave the Hessian singular: restart BFGS
+                        # from a Nelder-Mead solution, which gives the same estimate with a usable standard error
+                        m0 = nb.fit(disp=0, maxiter=1000, method="nm", start_params=m.params)
+                        m = nb.fit(disp=0, maxiter=300, method="bfgs", start_params=m0.params)
+                        row["note"] = "refit from a Nelder-Mead start (alpha near 0)"
+                    if not np.isfinite(m.bse["decade"]):
+                        # still singular: with alpha at 0 the negative binomial is the Poisson model, so fit that
+                        m = smf.poisson("n ~ decade + C(iso3)", panel).fit(disp=0, maxiter=300)
+                        row["note"] = "Poisson (negative binomial alpha at 0)"
                 b, se = m.params["decade"], m.bse["decade"]
                 row.update(rate_ratio_per_decade=np.exp(b), ci_low=np.exp(b - 1.96 * se), ci_high=np.exp(b + 1.96 * se),
                            p=m.pvalues["decade"], alpha=m.params.get("alpha", np.nan))
