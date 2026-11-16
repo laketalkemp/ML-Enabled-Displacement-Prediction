@@ -26,6 +26,9 @@ FEATURE_SETS = {
     "all8": list(inform.SHORT_NAMES.values()),
     "inform4": ["inform_lack_coping_capacity", "inform_hazard_exposure", "inform_risk", "inform_vulnerability"],
     "inform3": ["inform_lack_coping_capacity", "inform_hazard_exposure", "inform_vulnerability"],
+    # The four IMF (climate-driven INFORM) indicators: the climate-resilience lens shown beside the eight-indicator levels
+    # (decided Nov 16, 2026, with the JRC's inform4 as the other lens).
+    "imf4": ["cdi_risk", "cdi_hazard_exposure", "cdi_vulnerability", "cdi_lack_coping_capacity"],
     # Vulnerability + lack of coping capacity only (no hazard, no risk): for testing vulnerability against
     # hazard impacts without circularity. The first column anchors the sign.
     "vc4": ["inform_vulnerability", "inform_lack_coping_capacity", "cdi_vulnerability", "cdi_lack_coping_capacity"],

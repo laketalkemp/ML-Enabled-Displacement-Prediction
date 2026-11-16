@@ -6,8 +6,8 @@ authors:
     given-names: LaKeta
     affiliation: "Halıcıoğlu Data Science Institute, University of California San Diego"
     email: lkemp@ucsd.edu
-version: 1.1.0
-date-released: 2026-10-28
+version: 1.3.0
+date-released: 2026-11-16
 license: MIT
 repository-code: "https://github.com/laketalkemp/ML-Enabled-Displacement-Prediction"
 url: "https://laketalkemp.github.io/ML-Enabled-Displacement-Prediction/"

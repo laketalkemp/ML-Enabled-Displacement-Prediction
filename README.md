@@ -10,8 +10,9 @@ Composite climate-vulnerability index, subnational hazard layers and displacemen
 |---|---|---|
 | Country vulnerability index (INFORM + climate-driven INFORM, PCA score, 4 vulnerability levels) | v1.1: one row per ISO3, imputation flags, stability of each country's level | `src/hvd/`, `scripts/run_index.py` |
 | Reproduction of the original notebook (v1.0) | Exact (tested) | `scripts/run_index.py --legacy`, `tests/` |
-| Dashboard (GitHub Pages) | Regenerated on ISO3 keys | `docs/` |
-| Province layers, proof-of-concept regions | Philippines (82), Afghanistan (34), Bangladesh (64) | `data/processed/regions/`, `data/external/` |
+| Dashboard (GitHub Pages) | Regenerated on the crosswalk's keys and display names; disputed areas hatched | `docs/`, `reports/disputed_areas.md` |
+| Country crosswalk: one key and display name per place, a decision for every source code | v1.3 | `src/hvd/crosswalk.py`, `scripts/build_country_crosswalk.py`, `reports/country_crosswalk.md` |
+| Province layers, proof-of-concept regions | Philippines (81 for EM-DAT work; 82 in the boundary layer), Afghanistan (34), Bangladesh (64) | `data/processed/regions/`, `data/external/` |
 | Observed drought layer (ERA5-Land SPI/SPEI, 1991–2025) | Done | `data/processed/drought/`, `scripts/drought_indices.py` |
 | EM-DAT events by province | Script only (data is restricted) | `scripts/emdat_province_counts.py` |
 | Statistics: hazard trends, co-occurrence, seasonality, vulnerability vs impacts, spatial clustering, archetypes | v1.2 (code; EM-DAT-derived outputs stay local) | `src/hvd/stats/`, `scripts/stats_country.py`, `scripts/stats_province.py` |
@@ -38,7 +39,7 @@ The steps that need restricted or large data are documented in `data/README.md`:
 - `scripts/emdat_province_counts.py` (your own EM-DAT export)
 - `scripts/build_poc_regions.py`
 - the statistics (v1.2), in this order, once the inputs in `data/README.md` are in place:
-  `scripts/stats_country.py`, `scripts/stats_province.py`, `scripts/stats_idmc.py`, `scripts/download_cordex.py` (CDS API key; about a day), `scripts/stats_cordex.py --units data/raw/cordex_units`, then `scripts/make_stats_figures.py` and `scripts/make_cordex_figures.py`
+  `scripts/build_country_crosswalk.py` (v1.3; rebuilds from committed files if the raw exports are absent), `scripts/stats_country.py`, `scripts/stats_province.py`, `scripts/stats_idmc.py`, `scripts/download_cordex.py` (CDS API key; about a day), `scripts/stats_cordex.py --units data/raw/cordex_units`, then `scripts/make_stats_figures.py` and `scripts/make_cordex_figures.py`
 
 ## Layout
 
@@ -48,7 +49,7 @@ scripts/          run_index.py and the data-preparation scripts above
 data/             raw/, external/, processed/ — see data/README.md for sources, licences, checksums
 baseline/         v1.0 notebook outputs used by the regression tests
 notebooks/        archived original Colab notebook (outputs stripped)
-reports/          data dictionary, Week 1 findings, region screening, EM-DAT profile, drought layer
+reports/          data dictionary, Week 1 findings, region screening, EM-DAT profile, drought layer, country crosswalk, disputed areas
 docs/             GitHub Pages site (index.html, PrelimCaseStudy.html, the four interactive outputs, assets/)
 tests/            pytest suite
 ```

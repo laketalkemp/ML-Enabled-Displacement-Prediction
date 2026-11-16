@@ -1,19 +1,29 @@
 # Changelog
 
-## Unreleased (v1.3)
+## v1.3.0 (November 16, 2026)
 
 **Country crosswalk** (`src/hvd/crosswalk.py`, `scripts/build_country_crosswalk.py`, `tests/test_crosswalk.py`)
 - One key per place: Natural Earth's `ISO_A3_EH`, or `ADM0_A3` where it is −99 (Somaliland, Kosovo, Northern Cyprus, Siachen Glacier). 242 keys.
-- Display names: UN short names in natural word order for UN members and observers; UN statistical names for other places (for example Taiwan Province of China, Hong Kong SAR (China), Kosovo (UNSCR 1244)).
+- Display names: UN short names in natural word order for UN members and observers (Republic of Yemen, Islamic Republic of Iran, State of Palestine); UN statistical names for other places (for example Taiwan Province of China, Hong Kong SAR (China), Kosovo (UNSCR 1244)); Somaliland (Somalia) and Northern Cyprus (Cyprus). 243 keys.
 - Every country code in EM-DAT, IDMC and the WDI export has a logged decision (`data/processed/crosswalk/country_aliases.csv`, `reports/country_crosswalk.md`); the build fails on a code without one.
-- EM-DAT and IDMC: the Canary Islands, the Azores, France's overseas departments and Svalbard now count with their country; EM-DAT's "Serbia Montenegro" (2000–2006) goes to Montenegro when a record names only Montenegro, otherwise to Serbia; IDMC's Abyei Area is excluded; XKX is Kosovo.
-- Somaliland is marked to take Somalia's score on the map (`data_parent`).
+- EM-DAT and IDMC: the Canary Islands, the Azores, France's overseas departments and Svalbard now count with their country; EM-DAT's "Serbia Montenegro" (2000–2006) goes to Montenegro when a record names only Montenegro, otherwise to Serbia; IDMC's the Abyei Area is its own place, attributed to neither Sudan nor South Sudan; XKX is Kosovo.
+- Somaliland takes Somalia's score on the map (`data_parent`).
+
+**Map and dashboard** (`src/hvd/viz.py`, `reports/disputed_areas.md`)
+- Natural Earth's breakaway and disputed areas are hatched, with neutral names and no sovereignty attributes; a UN-style disclaimer sits under the map. Nagorno-Karabakh is left out (dissolved January 1, 2024).
+- The Abyei Area is cut out of Sudan and drawn on its own, gray and hatched.
+- The map, the year slider, the top-10 race and the indicator chart show the crosswalk's display names.
+- `displacement_tiers.html`: Low-level median 21.1 per 100,000, Severe vs Low 15.9×, 28 countries at the Severe level.
+- `imf4` indicator set (the four IMF indicators) for the two-lens comparison.
+- December analyses run early: `scripts/stats_cordex_archetypes.py`, `scripts/stats_events.py` (CORDEX outputs only are shareable).
 
 **Effect on the statistics (rerun Nov 16)**
 - Median weather displacement at the Low vulnerability level: 19 → 21 per 100,000 a year (France's overseas departments now count with France), so the Severe-to-Low ratio is 16×, not 17×. The Severe median (336) and the per-10-point estimates (×1.34; +28% given any displacement) are unchanged.
 - Moran's I for people affected per head: 0.406 → 0.404 (reported as 0.40, not 0.41). Bivariate I (0.36), the 28 high-high countries and their 16-country overlap with the Severe level are unchanged.
 - Hazard archetypes: 173 countries, not 176 (separately listed regions merged): 60 flood-led, 61 storm-led and 52 mixed; Cramér's V with the vulnerability levels 0.47 (was 0.48); bootstrap stability 0.71 (was 0.69).
-- Trends, deaths per fatal event (+48% storms, +29% floods, +36% all climate hazards) and the medians by vulnerability level are unchanged. The extreme-temperature trend (+16%) now needs a restart of the negative binomial fit, because its dispersion sits at zero (`stats/country.py`); q = 0.03 (was 0.02). Co-occurrence of extreme temperature and wildfire: 1.23× (was 1.24×).
+- Deaths per fatal event across all climate hazards: +35% per 10 points (was +36%; 1.356 → 1.355, CI 17–57% unchanged). Storms (+48%) and floods (+29%) and the medians by vulnerability level are unchanged.
+- Trends: high-impact storm records +18% a decade (was +17%); all-record trends unchanged (storms +12%, heat +16%). The extreme-temperature trend now needs a restart of the negative binomial fit, because its dispersion sits at zero (`stats/country.py`); q = 0.03 (was 0.02).
+- Co-occurrence of extreme temperature and wildfire: 1.23× (was 1.24×); storm-led archetype 52% storms (was 53%).
 
 ## v1.2.0 (November 2026)
 
